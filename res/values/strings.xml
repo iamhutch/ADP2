@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HouseBoss</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="house_boss">House Boss</string>
+    <string name="please_enter_your_zip_code_">Please enter your zip code:</string>
+    <string name="zip_code">Zip Code</string>
+    <string name="skip">Skip</string>
+    <string name="submit">Submit</string>
+    <string name="setup">Setup</string>
+
+</resources>
