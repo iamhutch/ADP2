@@ -38,8 +38,13 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * Main Class that handles the weather display as well as the list
+ * of reminders that the user has saved.
+ */
 public class MainActivity extends Activity {
 	
+	// VARIABLES SETUP
 	public static final String TAG = "MainActivity";
 	private AppPreferences _appPrefs;
 	Context _context;
@@ -61,14 +66,14 @@ public class MainActivity extends Activity {
 			Log.i(TAG, "HANDLER STARTED");
 
 			if (mymessage.arg1 == RESULT_OK	&& mymessage.obj != null) {
-		        Log.i("RESPONSE", mymessage.obj.toString());
+		        //Log.i("RESPONSE", mymessage.obj.toString());
 				JSONObject json = null;
 				try {
 					json = new JSONObject(mymessage.obj.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				Log.i("UPDATE WITH JSON", json.toString());
+				//Log.i("UPDATE WITH JSON", json.toString());
 				updateWeather(json);
 				
 			} else if (mymessage.arg1 == RESULT_CANCELED && mymessage.obj != null){
@@ -82,7 +87,7 @@ public class MainActivity extends Activity {
 	};
 	
 	/**
-	 * Updates all textviews with received JSON data.
+	 * Updates all weather textviews with received JSON data.
 	 * 
 	 * @param data
 	 *            the data
@@ -102,15 +107,18 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		_reminderList = (ListView) findViewById(R.id.listview);
 		
+		// DUMMY DATA BEING USED FOR NOW
 		String[] values = new String[] {"Change air filter", "Check fire detector batteries"};
 		/*_reminderArrayList = new ArrayList<HashMap<String, String>>();
-
 		HashMap<String, String> displayMap = new HashMap<String, String>();
 
 		for (int i= 0; i<values.length; ++i) {
@@ -118,20 +126,22 @@ public class MainActivity extends Activity {
 			displayMap.put("Icon", values[i]);
 			_reminderArrayList.add(displayMap);
 		}
-
 		_adapter = new SimpleAdapter(this,
 				_reminderArrayList, R.layout.activity_main_row,
-				_from, _to);*/
+				_from, _to);
+		*/
+		
 		ArrayAdapter<String> _adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
 		_reminderList.setAdapter(_adapter);
+		((TextView) findViewById(R.id.empty)).setVisibility(View.GONE);
 		
-		TextView _empty = (TextView) findViewById(R.id.empty);
-		_empty.setVisibility(View.GONE);
-		
+		// GET WEATHER DATA BASED ON SAVED ZIP CODE IN SHARED PREFS
 		_appPrefs = new AppPreferences(getApplicationContext());
 		if (_appPrefs.getZip().length() > 0) {
+			
+			// GET OUR ZIP CODE
 			_zipCode = _appPrefs.getZip();
-			Log.i(TAG, "SAVED ZIP CODE: " + _zipCode);
+			//Log.i(TAG, "SAVED ZIP CODE: " + _zipCode);
 			
 			// GET WEATHER INFORMATION BASED ON ZIP CODE IN SHARED PREFERENCES
 			Messenger messenger = new Messenger(searchServiceHandler);
@@ -143,13 +153,15 @@ public class MainActivity extends Activity {
 		} else {
     		Log.i(TAG, "Zip field is empty.");
 			
-    		// ALERT USER OF EMPTY FIELD
-			Toast.makeText(this, "No zip code found", Toast.LENGTH_LONG).show();
+    		// ALERT USER THAT THERE IS NO ZIP SAVED
+			Toast.makeText(this, "No zip code saved. Please add one in app Settings.", Toast.LENGTH_LONG).show();
 		}
-		
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -157,6 +169,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
