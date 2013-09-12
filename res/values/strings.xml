@@ -10,5 +10,7 @@
     <string name="skip">Skip</string>
     <string name="submit">Submit</string>
     <string name="setup">Setup</string>
+    <string name="no_reminders_saved_">No reminders saved.</string>
+    <string name="add_new">Add New</string>
 
 </resources>

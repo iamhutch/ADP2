@@ -10,6 +10,9 @@
  */
 package com.lucyhutcheson.houseboss;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,6 +30,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +44,13 @@ public class MainActivity extends Activity {
 	private AppPreferences _appPrefs;
 	Context _context;
 	String _zipCode;
+	ListView _reminderList;
+	String[] _from = new String[] { "Title", "Icon" };
+	int[] _to = new int[] { R.id.reminderItem, R.id.reminderIcon };
+	SimpleAdapter _adapter;
+	ArrayList<HashMap<String, String>> _reminderArrayList;
 
+	
 	// Handle communication between this activity and
 	// GetDataService class
 	@SuppressLint("HandlerLeak")
@@ -92,6 +106,28 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		_reminderList = (ListView) findViewById(R.id.listview);
+		
+		String[] values = new String[] {"Change air filter", "Check fire detector batteries"};
+		/*_reminderArrayList = new ArrayList<HashMap<String, String>>();
+
+		HashMap<String, String> displayMap = new HashMap<String, String>();
+
+		for (int i= 0; i<values.length; ++i) {
+			displayMap.put("Title", values[i]);
+			displayMap.put("Icon", values[i]);
+			_reminderArrayList.add(displayMap);
+		}
+
+		_adapter = new SimpleAdapter(this,
+				_reminderArrayList, R.layout.activity_main_row,
+				_from, _to);*/
+		ArrayAdapter<String> _adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
+		_reminderList.setAdapter(_adapter);
+		
+		TextView _empty = (TextView) findViewById(R.id.empty);
+		_empty.setVisibility(View.GONE);
+		
 		_appPrefs = new AppPreferences(getApplicationContext());
 		if (_appPrefs.getZip().length() > 0) {
 			_zipCode = _appPrefs.getZip();
@@ -117,8 +153,23 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.main_action_bar, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle presses on the action bar items
+		switch (item.getItemId()) {
+		case R.id.action_new:
+			//onLatestList();
+			return true;
+		case R.id.action_settings:
+			//onFavoritesList();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 }
