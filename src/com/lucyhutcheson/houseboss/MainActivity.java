@@ -177,14 +177,29 @@ public class MainActivity extends Activity {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
 		case R.id.action_new:
-			//onLatestList();
+			onAddActivity();
 			return true;
 		case R.id.action_settings:
-			//onFavoritesList();
+			onSettingsActivity();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	public void onAddActivity() {
+		// INTENT TO START ADD ACTIVITY
+		Intent intent = new Intent(MainActivity.this, AddActivity.class);
+		MainActivity.this.startActivity(intent);
+	}
+
+	public void onSettingsActivity() {
+		Toast.makeText(this, "Settings screen not yet available.", Toast.LENGTH_SHORT).show();
+
+		
+		// INTENT TO START ADD ACTIVITY
+		//Intent intent = new Intent(MainActivity.this, AddActivity.class);
+		//MainActivity.this.startActivity(intent);
 	}
 
 }

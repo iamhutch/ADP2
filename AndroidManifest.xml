@@ -16,10 +16,11 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/HouseBossBase" >
         <activity
             android:name="com.lucyhutcheson.houseboss.SplashActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,11 +36,23 @@
         <activity
             android:name="com.lucyhutcheson.houseboss.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-           >
+            android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name="AddActivity"
+            android:parentActivityName="com.lucyhutcheson.houseboss.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lucyhutcheson.houseboss.MainActivity" />
+        </activity>
+
         <service android:name="com.lucyhutcheson.libs.GetDataService" >
         </service>
-        </application>
+        <service android:name="com.lucyhutcheson.libs.ScheduleService" >
+        </service>
+        <service android:name="com.lucyhutcheson.libs.NotifyService" >
+        </service>
+    </application>
 
 </manifest>

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="cyan">#618497</color>
-    
-    
+
+    <color name="cyan">#6794a8</color>
+    <color name="beige">#dbd4ca</color>
+    <color name="grey">#3e4142</color>
+    <color name="ltgrey">#888888</color>
+
 </resources>
