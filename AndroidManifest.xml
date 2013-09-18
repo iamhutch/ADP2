@@ -41,12 +41,13 @@
         <activity
             android:name="AddActivity"
             android:parentActivityName="com.lucyhutcheson.houseboss.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lucyhutcheson.houseboss.MainActivity" />
         </activity>
-
+        
         <service android:name="com.lucyhutcheson.libs.GetDataService" >
         </service>
         <service android:name="com.lucyhutcheson.libs.ScheduleService" >

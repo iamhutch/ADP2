@@ -73,7 +73,6 @@ public class NotifyService extends Service {
 		// What time to show on the notification
 		long time = System.currentTimeMillis();
 
-		@SuppressWarnings("deprecation")
 		Notification notification = new Notification(icon, text, time);
 
 		// The PendingIntent to launch our activity if the user selects this

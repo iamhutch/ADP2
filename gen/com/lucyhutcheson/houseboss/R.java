@@ -39,26 +39,27 @@ public final class R {
         public static final int roundedrectangle=0x7f020009;
     }
     public static final class id {
-        public static final int action_cancel=0x7f090011;
-        public static final int action_new=0x7f090013;
-        public static final int action_save=0x7f090010;
-        public static final int action_settings=0x7f090012;
-        public static final int categorySpinner=0x7f090004;
-        public static final int city=0x7f090005;
-        public static final int datePicker=0x7f090002;
-        public static final int descriptionField=0x7f090001;
-        public static final int empty=0x7f090008;
-        public static final int forecast=0x7f090006;
-        public static final int listview=0x7f090007;
-        public static final int rectangle=0x7f09000f;
-        public static final int reminderIcon=0x7f09000a;
-        public static final int reminderItem=0x7f090009;
-        public static final int skip=0x7f09000c;
-        public static final int splashbg=0x7f09000e;
-        public static final int submit=0x7f09000d;
-        public static final int timePicker=0x7f090003;
-        public static final int titleField=0x7f090000;
-        public static final int zipText=0x7f09000b;
+        public static final int action_cancel=0x7f090012;
+        public static final int action_new=0x7f090014;
+        public static final int action_save=0x7f090011;
+        public static final int action_settings=0x7f090013;
+        public static final int categorySpinner=0x7f090005;
+        public static final int city=0x7f090006;
+        public static final int content=0x7f090000;
+        public static final int dateField=0x7f090003;
+        public static final int descriptionField=0x7f090002;
+        public static final int empty=0x7f090009;
+        public static final int forecast=0x7f090007;
+        public static final int listview=0x7f090008;
+        public static final int rectangle=0x7f090010;
+        public static final int reminderIcon=0x7f09000b;
+        public static final int reminderItem=0x7f09000a;
+        public static final int skip=0x7f09000d;
+        public static final int splashbg=0x7f09000f;
+        public static final int submit=0x7f09000e;
+        public static final int timeField=0x7f090004;
+        public static final int titleField=0x7f090001;
+        public static final int zipText=0x7f09000c;
     }
     public static final class layout {
         public static final int activity_add=0x7f030000;
@@ -81,8 +82,11 @@ public final class R {
         public static final int date=0x7f06000f;
         public static final int hello_world=0x7f060002;
         public static final int house_boss=0x7f060003;
+        public static final int interior_or_exterior_=0x7f060015;
         public static final int no_reminders_saved_=0x7f060009;
         public static final int one_time=0x7f060012;
+        public static final int pick_a_date=0x7f060013;
+        public static final int pick_a_time=0x7f060014;
         public static final int please_enter_your_zip_code_=0x7f060004;
         public static final int setup=0x7f060008;
         public static final int size_brand_=0x7f06000c;
@@ -106,7 +110,7 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070006;
+        public static final int AppBaseTheme=0x7f070007;
         public static final int HouseBoss_CancelButton=0x7f070005;
         public static final int HouseBoss_PageTitle=0x7f070003;
         public static final int HouseBoss_SubmitButton=0x7f070004;
@@ -114,6 +118,7 @@ public final class R {
          */
         public static final int HouseBoss_WeatherCity=0x7f070001;
         public static final int HouseBoss_WeatherForecast=0x7f070002;
+        public static final int HouseBoss_spinnerStyle=0x7f070006;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.

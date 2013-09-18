@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,43 +7,72 @@
     android:orientation="vertical"
     android:padding="20dp" >
 
-    <TextView
-        style="@style/HouseBoss.PageTitle"
-        android:text="@string/add_new_reminder" />
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/darkrectangle"
-        android:orientation="vertical" >
+        android:layout_height="wrap_content" >
 
-        <EditText
-            android:id="@+id/titleField"
+        <LinearLayout
+            android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/what_do_you_need_to_do_" />
+            android:layout_height="400dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/darkrectangle"
+            android:orientation="vertical" >
 
-        <EditText
-            android:id="@+id/descriptionField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/size_brand_" />
+            <EditText
+                android:id="@+id/titleField"
+                android:layout_width="match_parent"
+                android:padding="15dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/what_do_you_need_to_do_" />
 
-        <DatePicker
-            android:id="@+id/datePicker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/descriptionField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:hint="@string/size_brand_" />
 
-        <TimePicker
-            android:id="@+id/timePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/dateField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:hint="@string/pick_a_date" />
 
-        <Spinner
-            android:id="@+id/categorySpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="showDatePickerDialog"
+                android:text="@string/date" />
 
+            <EditText
+                android:id="@+id/timeField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:hint="@string/pick_a_time" />
 
-</LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="showTimePickerDialog"
+                android:text="@string/time" />
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                style="@style/HouseBoss.spinnerStyle"
+                android:prompt="@string/interior_or_exterior_"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/HouseBoss.PageTitle"
+            android:layout_above="@id/content"
+            android:text="@string/add_new_reminder" />
+    </RelativeLayout>
+
+</ScrollView>

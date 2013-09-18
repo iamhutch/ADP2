@@ -20,5 +20,8 @@
     <string name="time">Time</string>
     <string name="start">Start</string>
     <string name="one_time">One Time</string>
+    <string name="pick_a_date">Pick a date</string>
+    <string name="pick_a_time">Pick a time</string>
+    <string name="interior_or_exterior_">Interior or Exterior?</string>
 
 </resources>
