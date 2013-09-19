@@ -47,7 +47,7 @@ public class WebConnections {
 	// Open the URL connection and execute using the URL parameter passed in
 	public static String getURLStringResponse(URL url){
 		String response = "";
-        Log.i("WEBCONNECTIONS", "GETURLSTRINGRESPONSE: " + url.toString());
+        //Log.i("WEBCONNECTIONS", "GETURLSTRINGRESPONSE: " + url.toString());
 		
 		try {
 			// Open connection
@@ -63,7 +63,7 @@ public class WebConnections {
 				response = new String(contentBytes, 0, bytesRead);
 				responseBuffer.append(response);
 			} 
-			Log.i("BUFFER STRING", responseBuffer.toString());
+			//Log.i("BUFFER STRING", responseBuffer.toString());
 			// Return response buffer that has all our data
 			return responseBuffer.toString(); 
 			

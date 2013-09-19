@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.lucyhutcheson.libs.AppPreferences;
+import com.lucyhutcheson.libs.FileFunctions;
 import com.lucyhutcheson.libs.GetDataService;
 
 import android.net.Uri;
@@ -32,7 +33,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -47,13 +47,13 @@ public class MainActivity extends Activity {
 	// VARIABLES SETUP
 	public static final String TAG = "MainActivity";
 	private AppPreferences _appPrefs;
-	Context _context;
+	static Context _context;
 	String _zipCode;
 	ListView _reminderList;
-	String[] _from = new String[] { "Title", "Icon" };
-	int[] _to = new int[] { R.id.reminderItem, R.id.reminderIcon };
 	SimpleAdapter _adapter;
 	ArrayList<HashMap<String, String>> _reminderArrayList;
+	static final String[] _from = new String[] { "title", "month", "day", "year", "hour", "minute"};
+	static final int[] _to = new int[] { R.id.reminderTitle, R.id.reminderMonth, R.id.reminderDay, R.id.reminderYear, R.id.reminderHour, R.id.reminderMinute};
 
 	
 	// Handle communication between this activity and
@@ -93,11 +93,11 @@ public class MainActivity extends Activity {
 	 *            the data
 	 */
 	public void updateWeather(JSONObject data) {
-		Log.i("UPDATE DATA", data.toString());
+		//Log.i("UPDATE DATA", data.toString());
 		try {
 			JSONObject city = data.getJSONObject("display_location");
 			String forecast = data.getString("temp_f");
-			Log.i(TAG, forecast);
+			//Log.i(TAG, forecast);
 			((TextView) findViewById(R.id.forecast)).setText(forecast +  (char) 0x00B0);
 			((TextView) findViewById(R.id.city)).setText(city.getString("full"));
 
@@ -107,6 +107,36 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		
+		try {
+			Log.i("VIEW ACTIVITY", "TRYING");
+			try {
+				_reminderArrayList = getSavedReminders();
+				Log.i(TAG, _reminderArrayList.toString());
+				
+			} catch (Exception e) {
+				Log.e(TAG, "Error getting reminders");
+				e.printStackTrace();
+			}
+			
+			if (_reminderArrayList != null) {
+				// ATTACH LIST ADAPTER
+				_reminderList = (ListView) findViewById(R.id.listview);
+				SimpleAdapter _myAdapter = new SimpleAdapter(_context, _reminderArrayList, R.layout.activity_main_row, _from, _to);
+				_reminderList.setAdapter(_myAdapter);
+				((TextView) findViewById(R.id.empty)).setVisibility(View.GONE);
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "GET REMINDERS ERROR");
+	        Toast.makeText(_context, "No saved reminders.", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -114,26 +144,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		_reminderList = (ListView) findViewById(R.id.listview);
-		
-		// DUMMY DATA BEING USED FOR NOW
-		String[] values = new String[] {"Change air filter", "Check fire detector batteries"};
-		/*_reminderArrayList = new ArrayList<HashMap<String, String>>();
-		HashMap<String, String> displayMap = new HashMap<String, String>();
-
-		for (int i= 0; i<values.length; ++i) {
-			displayMap.put("Title", values[i]);
-			displayMap.put("Icon", values[i]);
-			_reminderArrayList.add(displayMap);
-		}
-		_adapter = new SimpleAdapter(this,
-				_reminderArrayList, R.layout.activity_main_row,
-				_from, _to);
-		*/
-		
-		ArrayAdapter<String> _adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
-		_reminderList.setAdapter(_adapter);
-		((TextView) findViewById(R.id.empty)).setVisibility(View.GONE);
+		_context = this;
 		
 		// GET WEATHER DATA BASED ON SAVED ZIP CODE IN SHARED PREFS
 		_appPrefs = new AppPreferences(getApplicationContext());
@@ -141,7 +152,6 @@ public class MainActivity extends Activity {
 			
 			// GET OUR ZIP CODE
 			_zipCode = _appPrefs.getZip();
-			//Log.i(TAG, "SAVED ZIP CODE: " + _zipCode);
 			
 			// GET WEATHER INFORMATION BASED ON ZIP CODE IN SHARED PREFERENCES
 			Messenger messenger = new Messenger(searchServiceHandler);
@@ -159,6 +169,50 @@ public class MainActivity extends Activity {
 		
 	}
 
+	/**
+	 * Function to get read the favorites file which contains any dining data
+	 * that was saved as a favorite.
+	 * 
+	 * @return hashmap of our favorites data
+	 */
+	@SuppressWarnings({ "unchecked", "unused" })
+	public static ArrayList<HashMap<String, String>> getSavedReminders() {
+		Log.i("GET SAVED REMINDERS", "TRYING");
+		
+		
+		/* 
+		 * GET STORED DATA FROM REMINDERS FILE
+		 */
+		Object stored = FileFunctions.readObjectFile(_context, AddActivity.REMINDER_FILENAME, false);
+		Log.i(TAG, stored.toString());
+		ArrayList<HashMap<String, String>> _remindersList = null;
+
+		// CHECK IF OBJECT EXISTS
+		if (stored == null) {
+			Log.i("HOUSEBOSS", "NO REMINDERS FILE FOUND");
+			_remindersList = new ArrayList<HashMap<String, String>>();
+		}
+		// IF OBJECT EXISTS, BRING IN DATA AND ADD TO HASHMAP
+		else {
+			// CAST HASHMAP
+			_remindersList = (ArrayList<HashMap<String, String>>) stored;
+		}
+		return _remindersList;
+
+		
+		/*
+		// CAST ARRAYLIST
+		try {
+			_remindersList = (ArrayList<HashMap<String, String>>) stored;
+			Log.i(TAG, _remindersList.toString());
+		} catch (Exception e) {
+			Log.e("REMINDERS FOUND","ERROR");
+			e.printStackTrace();
+		}
+				
+		return _remindersList;*/
+	}
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */

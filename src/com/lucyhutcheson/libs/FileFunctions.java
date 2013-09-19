@@ -13,16 +13,7 @@ import android.content.Context;
 import android.util.Log;
 
 public class FileFunctions {
-
-	/**
-	 * Function to save strings to file.
-	 *
-	 * @param context the context
-	 * @param filename the filename
-	 * @param content the content
-	 * @param external the external
-	 * @return the boolean
-	 */
+	// FUNCTION TO SAVE STRINGS
 	public static Boolean storeStringFile(Context context, String filename, String content, Boolean external) {
 		try {
 			File file;
@@ -38,8 +29,6 @@ public class FileFunctions {
 			}
 			// WRITE/SAVE OUR DATA AND THEN CLOSE OUT THE STREAM
 			fos.write(content.getBytes());
-			Log.i("WRITE STRING", "SUCCESSFUL");
-
 			fos.close();
 		} catch (IOException e){
 			Log.e("WRITE ERROR", filename);
@@ -47,16 +36,8 @@ public class FileFunctions {
 		return true;
 		
 	}
-	/**
-	 * Store object file.
-	 *
-	 * @param context the context
-	 * @param filename the filename
-	 * @param content the content
-	 * @param external the external
-	 * @return the boolean
-	 */
-	public static Boolean storeObjectFile(Context context, String filename, Object content, Boolean external) {
+	// FUNCTION TO SAVE OBJECTS 
+	public static Boolean storeObjectFile(Context _context, String filename, Object content, Boolean external) {
 		try {
 			File file;
 			FileOutputStream fos;
@@ -64,31 +45,26 @@ public class FileFunctions {
 			
 			// CHECK IF WE'RE WRITING TO THE SD CARD
 			if (external){
-				file = new File(context.getExternalFilesDir(null), filename);
+				file = new File(_context.getExternalFilesDir(null), filename);
 				fos = new FileOutputStream(file);
 			// ELSE WE WRITE TO INTERNAL STORAGE					
 			} else {
-				fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
+				fos = _context.openFileOutput(filename, Context.MODE_PRIVATE);
 			}
 			// WRITE/SAVE OUR DATA OBJECT AND THEN CLOSE OUT THE STREAM
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(content);
 			oos.close();
 			fos.close();
+		} catch (FileNotFoundException e) {
+			Log.e("FILEFUNCTIONS", "File Not Found");
+			e.printStackTrace();
 		} catch (IOException e){
 			Log.e("WRITE ERROR", filename);
 		}
 		return true;
 	}
 	
-	/**
-	 * Read string file.
-	 *
-	 * @param context the context
-	 * @param filename the filename
-	 * @param external the external
-	 * @return the string
-	 */
 	public static String readStringFile(Context context, String filename, Boolean external) {
 		String content = "";
 		try {
@@ -123,14 +99,6 @@ public class FileFunctions {
 		return content;
 	}
 	
-	/**
-	 * Read object file.
-	 *
-	 * @param context the context
-	 * @param filename the filename
-	 * @param external the external
-	 * @return the object
-	 */
 	public static Object readObjectFile(Context context, String filename, Boolean external) {
 		Object content = new Object();
 		try {

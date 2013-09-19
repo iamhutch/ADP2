@@ -70,7 +70,7 @@ public class GetDataService extends IntentService  {
 				try {
 					// GET OUR JSON RESPONSE
 					JSONObject jsonResult = new JSONObject(response);
-					Log.i("JSON OBJECT", jsonResult.toString());
+					//Log.i("JSON OBJECT", jsonResult.toString());
 					
 					
 					// NO LOCATION RECEIVED
@@ -93,15 +93,11 @@ public class GetDataService extends IntentService  {
 
 					} else {
 						
-						Log.i("JSON RESPONSE DATA", jsonResult.getString("current_observation"));
+						//Log.i("JSON RESPONSE DATA", jsonResult.getString("current_observation"));
+						
 						// GET OUR DATA FROM THE JSON ARRAY
-						
 						JSONObject arrayResults = jsonResult.getJSONObject("current_observation");
-						
-						String temp = arrayResults.getString("temp_f");
-						Log.i("JSON TEMP", temp);
-						//String stringResults = jsonResult.getString("location");
-						
+												
 						// SAVE THE DATA TO OUR TEMP FILE FOR INCLUSION IN FAVORITES IF SELECTED BY USER
 						FileFunctions.storeStringFile(getApplicationContext(), "temp", arrayResults.toString(), true);
 						

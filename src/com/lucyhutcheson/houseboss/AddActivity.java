@@ -1,3 +1,13 @@
+/*
+ * project		HouseBoss
+ * 
+ * package		com.lucyhutcheson.houseboss
+ * 
+ * @author		Lucy Hutcheson
+ * 
+ * date			Sep 19, 2013
+ * 
+ */
 package com.lucyhutcheson.houseboss;
 
 import java.util.ArrayList;
@@ -15,6 +25,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,14 +52,22 @@ public class AddActivity extends Activity {
 	static EditText _descriptionField;
 	static EditText _dateField;
 	static EditText _timeField;
+	String _categorySelected;
 	Spinner _category;
 	private ArrayList<HashMap<String, String>> _reminders;
+	public static final String REMINDER_FILENAME = "reminders";
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add);
+		Time today = new Time(Time.getCurrentTimezone());
+		today.setToNow();
+
+		((EditText) findViewById(R.id.dateField)).setHint(today.format("%m/%d/%Y"));
+		((EditText) findViewById(R.id.timeField)).setHint(today.format("%k:%M"));
+		
 
 	    List<String> SpinnerArray =  new ArrayList<String>();
 	    SpinnerArray.add("Interior");
@@ -63,13 +82,8 @@ public class AddActivity extends Activity {
 			// IF A CATEGORY IS SELECTED
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
-				String str = parent.getItemAtPosition(pos).toString();
-				Log.i(TAG, str);
+				_categorySelected = parent.getItemAtPosition(pos).toString();
 				
-				// MAKE SURE THAT WE AREN'T SELECTING OUR PLACEHOLDER
-				if (!str.equals("View Favorites")) {
-
-				}
 			}
 
 			@Override
@@ -95,10 +109,23 @@ public class AddActivity extends Activity {
 	public void onSubmit() {
 
 		_reminders = new ArrayList<HashMap<String, String>>();
-		
+
+		/*
+		 *  PULL SAVED DATA FIRST AND THEN ADD OUR NEW DATA
+		 * 
+		 */
+        try {
+        	_reminders.addAll(MainActivity.getSavedReminders());
+        	Log.i(TAG, "SAVED STRING " + _reminders.toString());
+        } catch (Exception e) {
+        	Log.e("JSINTERFACE", "No saved data found.");
+        	e.printStackTrace();
+        }
+
         HashMap<String, String> _newReminder = new HashMap<String, String>();
         _newReminder.put("title", _titleField.getText().toString());
         _newReminder.put("description", _descriptionField.getText().toString());
+        _newReminder.put("category", _categorySelected);
         _newReminder.put("year", Integer.toString(_year));
         _newReminder.put("month", Integer.toString(_month));
         _newReminder.put("day", Integer.toString(_day));
@@ -110,7 +137,9 @@ public class AddActivity extends Activity {
 		// Store data in singleton and file storage
 		ReminderSingleton.getInstance().set_reminder(_newReminder);
 		_reminders.add(_newReminder);
-		FileFunctions.storeObjectFile(this, "reminders", _reminders, false);
+    	Log.i(TAG, "NEW STRING " + _reminders.toString());
+		
+		FileFunctions.storeObjectFile(getApplicationContext(), REMINDER_FILENAME, _reminders, false);
         
 
 		// Create a new calendar set to the date chosen

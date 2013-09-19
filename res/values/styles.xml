@@ -67,9 +67,15 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">.5</item>
     </style>
-    <style name="HouseBoss.spinnerStyle"  parent="@android:style/Widget.TextView.SpinnerItem">
-       <item name="android:padding">35sp</item>
+
+    <style name="HouseBoss.spinnerStyle" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:padding">35sp</item>
     </style>
-    
+
+    <style name="HouseBoss.ReminderTitle" parent="HouseBossBase">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 
 </resources>
