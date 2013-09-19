@@ -241,16 +241,16 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	// IF USER CLICKS ADD ICON FROM MAIN ACTION BAR
 	public void onAddActivity() {
 		// INTENT TO START ADD ACTIVITY
 		Intent intent = new Intent(MainActivity.this, AddActivity.class);
 		MainActivity.this.startActivity(intent);
 	}
 
+	// IF USER CLICKS SETTINGS  FROM MAIN ACTION BAR
 	public void onSettingsActivity() {
 		Toast.makeText(this, "Settings screen not yet available.", Toast.LENGTH_SHORT).show();
-
-		
 		// INTENT TO START ADD ACTIVITY
 		//Intent intent = new Intent(MainActivity.this, AddActivity.class);
 		//MainActivity.this.startActivity(intent);

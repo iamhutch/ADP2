@@ -17,6 +17,10 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+/**
+ *  SplashActivity Class created to show a splash screen for 2 seconds 
+ *  and then redirect user to main activity
+ */
 public class SplashActivity extends Activity {
 
 	private static String TAG = SplashActivity.class.getName();

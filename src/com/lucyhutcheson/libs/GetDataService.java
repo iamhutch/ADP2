@@ -1,3 +1,13 @@
+/*
+ * project		HouseBoss
+ * 
+ * package		com.lucyhutcheson.libs
+ * 
+ * @author		Lucy Hutcheson
+ * 
+ * date			Sep 19, 2013
+ * 
+ */
 package com.lucyhutcheson.libs;
 
 import java.net.MalformedURLException;

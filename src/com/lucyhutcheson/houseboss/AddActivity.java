@@ -37,6 +37,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+/**
+ * Add Activity class created to handle the addition of reminders
+ * and save the reminders to internal storage.
+ * 
+ */
 public class AddActivity extends Activity {
 
 	public static final String TAG = "AddActivity";
@@ -58,17 +63,27 @@ public class AddActivity extends Activity {
 	public static final String REMINDER_FILENAME = "reminders";
 	
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// SETUP ACTIVITY
 		setContentView(R.layout.activity_add);
+		_titleField = (EditText) findViewById(R.id.titleField);
+		_descriptionField = (EditText) findViewById(R.id.descriptionField);
+		_dateField = (EditText) findViewById(R.id.dateField);
+		_timeField = (EditText) findViewById(R.id.timeField);
+
+		// Add today's date and time to the text fields
 		Time today = new Time(Time.getCurrentTimezone());
 		today.setToNow();
-
 		((EditText) findViewById(R.id.dateField)).setHint(today.format("%m/%d/%Y"));
 		((EditText) findViewById(R.id.timeField)).setHint(today.format("%k:%M"));
-		
 
+		// SETUP CATEGORY SPINNER
 	    List<String> SpinnerArray =  new ArrayList<String>();
 	    SpinnerArray.add("Interior");
 	    SpinnerArray.add("Exterior");
@@ -77,7 +92,6 @@ public class AddActivity extends Activity {
 	    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, SpinnerArray);
 		_category = (Spinner) findViewById(R.id.categorySpinner);
 		_category.setAdapter(adapter);
-		
 		_category.setOnItemSelectedListener(new OnItemSelectedListener() {
 			// IF A CATEGORY IS SELECTED
 			@Override
@@ -92,19 +106,16 @@ public class AddActivity extends Activity {
 			}
 		});
 		
-		// Create a new service client and bind our activity to this service
+		// CREATE A NEW SERVICE CLIENT AND BIND OUR ACTIVITY TO THIS SERVICE
 		scheduleClient = new ScheduleClient(this);
 		scheduleClient.doBindService();
 
-		_titleField = (EditText) findViewById(R.id.titleField);
-		_descriptionField = (EditText) findViewById(R.id.descriptionField);
-		_dateField = (EditText) findViewById(R.id.dateField);
-		_timeField = (EditText) findViewById(R.id.timeField);
+		
 
 	}
 
 	/**
-	 * This is the onClick called from the XML to set a new notification
+	 * This is the onClick called from the XML to set a new notification.
 	 */
 	public void onSubmit() {
 
@@ -122,6 +133,7 @@ public class AddActivity extends Activity {
         	e.printStackTrace();
         }
 
+        // ADD OUR DATA TO A HASHMAP
         HashMap<String, String> _newReminder = new HashMap<String, String>();
         _newReminder.put("title", _titleField.getText().toString());
         _newReminder.put("description", _descriptionField.getText().toString());
@@ -132,15 +144,10 @@ public class AddActivity extends Activity {
         _newReminder.put("hour", Integer.toString(_hour));
         _newReminder.put("minute", Integer.toString(_minute));
         
-		Log.i(TAG, _newReminder.toString());
-
-		// Store data in singleton and file storage
+        // STORE DATA IN SINGLETON AND FILE STORAGE
 		ReminderSingleton.getInstance().set_reminder(_newReminder);
-		_reminders.add(_newReminder);
-    	Log.i(TAG, "NEW STRING " + _reminders.toString());
-		
+		_reminders.add(_newReminder);		
 		FileFunctions.storeObjectFile(getApplicationContext(), REMINDER_FILENAME, _reminders, false);
-        
 
 		// Create a new calendar set to the date chosen
 		// we set the time to midnight (i.e. the first minute of that day)
@@ -161,20 +168,39 @@ public class AddActivity extends Activity {
 				"Notification set for: " + _day + "/" + (_month + 1) + "/"
 						+ _year, Toast.LENGTH_SHORT).show();
 	
-        // Finish
+        // FINISH
         ((AddActivity)this).finish();
 
 	}
 
 
+	/**
+	 * Show date picker dialog.
+	 *
+	 * @param v the v
+	 */
 	public void showDatePickerDialog(View v) {
 	    DialogFragment newFragment = new DatePickerFragment();
 	    newFragment.show(getFragmentManager(), "datePicker");
 	}
+	
+	/**
+	 * Show time picker dialog.
+	 *
+	 * @param v the v
+	 */
 	public void showTimePickerDialog(View v) {
 	    DialogFragment newFragment = new TimePickerFragment();
 	    newFragment.show(getFragmentManager(), "timePicker");
 	}
+	
+	/**
+	 * Sets the date.
+	 *
+	 * @param year the year
+	 * @param month the month
+	 * @param day the day
+	 */
 	public static void setDate(int year, int month, int day) {
 		_day = day;
 		_month = month;
@@ -182,6 +208,12 @@ public class AddActivity extends Activity {
 		_dateField.setText(Integer.toString(month+1) + "/" + Integer.toString(day) + "/" + Integer.toString(year) );
 	}
 
+	/**
+	 * Sets the time.
+	 *
+	 * @param hourOfDay the hour of day
+	 * @param minute the minute
+	 */
 	public static void setTime(int hourOfDay, int minute) {
 		_hour = hourOfDay;
 		_minute = minute;
@@ -190,6 +222,9 @@ public class AddActivity extends Activity {
 
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onStop()
+	 */
 	@Override
 	protected void onStop() {
 		// When our activity is stopped ensure we also stop the connection to
@@ -200,6 +235,9 @@ public class AddActivity extends Activity {
 		super.onStop();
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -207,6 +245,9 @@ public class AddActivity extends Activity {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
@@ -227,7 +268,6 @@ public class AddActivity extends Activity {
     /**
      * On click of the Skip button.
      *
-     * @param v the v
      */
     public void onCancel() {
 		AddActivity.this.finish();
@@ -235,9 +275,11 @@ public class AddActivity extends Activity {
 
 	
     /**
-     * Used to convert 24hr format to 12hr format with AM/PM values
+     * Used to convert 24hr format to 12hr format with AM/PM values.
      *
-     * @param integer mins, integer hours
+     * @param hours the hours
+     * @param mins the mins
+     * @return the string
      */
 	private static String convertTime(int hours, int mins) {
 		
