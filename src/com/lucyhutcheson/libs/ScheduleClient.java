@@ -75,6 +75,7 @@ public class ScheduleClient {
 	 */
 	public void setAlarmForNotification(Calendar c, int _reminderID, String _reminderTitle) {
 		Log.i("SCHEDULE CLIENT", "ID: " + Integer.toString(_reminderID));
+		Log.i("SCHEDULE CLIENT", "TITLE: " + _reminderTitle);
 		mBoundService.setAlarm(c, _reminderID, _reminderTitle);
 	}
 

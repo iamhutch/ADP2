@@ -11,6 +11,7 @@
 package com.lucyhutcheson.houseboss;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.lucyhutcheson.libs.NotifyService;
@@ -33,6 +34,8 @@ import android.widget.Toast;
 public class ViewActivity extends Activity {
 
 	public final static String TAG = "VIEWACTIVITY";
+	public static final String INTENT_VIEW = "com.lucyhutcheson.houseboss.INTENT_VIEW";
+	ArrayList<HashMap<String, String>> _reminderArrayList;
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -53,20 +56,48 @@ public class ViewActivity extends Activity {
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			int _id = extras.getInt(NotifyService.INTENT_ID);
-			Log.i(TAG, Integer.toString(_id));
-		} else {
+			
+			// CHECK IF WE ARE COMING FROM THE MAIN ACTIVITY
+			if (extras.getBoolean(INTENT_VIEW)) {
+				// ADD DATA FROM SINGLETON TO OUR TEXTVIEWS IN LAYOUT
+				HashMap<String, String> _selected = ReminderSingleton.getInstance().get_reminder();
+				((TextView) findViewById(R.id.itemTitle)).setText(_selected.get("title"));
+				((TextView) findViewById(R.id.itemDescription)).setText(_selected.get("description"));
+				((TextView) findViewById(R.id.reminderMonth)).setText(_selected.get("month"));
+				((TextView) findViewById(R.id.reminderDay)).setText(_selected.get("day"));
+				((TextView) findViewById(R.id.reminderYear)).setText(_selected.get("year"));
+				((TextView) findViewById(R.id.reminderTime)).setText(_selected.get("time"));
+				
+				
+			// OTHERWISE, WE ARE HERE BECAUSE OF A NOTIFICATION
+			} else {
+				int _id = extras.getInt(NotifyService.INTENT_ID);
+				Log.i(TAG, Integer.toString(_id));
+				try {
+					// GET OUR SAVED REMINDERS
+					_reminderArrayList = MainActivity.getSavedReminders();
+					Log.i(TAG, _reminderArrayList.toString());
+					
+					// FIND OUR NEEDED REMINDER BASED ON THE ID PASSED FROM NOTIFICATION
+					for(HashMap<String,String> _selected:_reminderArrayList) 
+						if(_selected.get("id").equals(Integer.toString(_id))) {
+							Log.i(TAG, _selected.toString());
+							((TextView) findViewById(R.id.itemTitle)).setText(_selected.get("title"));
+							((TextView) findViewById(R.id.itemDescription)).setText(_selected.get("description"));
+							((TextView) findViewById(R.id.reminderMonth)).setText(_selected.get("month"));
+							((TextView) findViewById(R.id.reminderDay)).setText(_selected.get("day"));
+							((TextView) findViewById(R.id.reminderYear)).setText(_selected.get("year"));
+							((TextView) findViewById(R.id.reminderTime)).setText(_selected.get("time"));
+						}
+					
+				} catch (Exception e) {
+					Log.e(TAG, "Error getting reminders");
+					e.printStackTrace();
+				}
 
-			// ADD DATA FROM SINGLETON TO OUR TEXTVIEWS IN LAYOUT
-			HashMap<String, String> _selected = ReminderSingleton.getInstance().get_reminder();
-			((TextView) findViewById(R.id.itemTitle)).setText(_selected.get("title"));
-			((TextView) findViewById(R.id.itemDescription)).setText(_selected.get("description"));
-			((TextView) findViewById(R.id.reminderMonth)).setText(_selected.get("month"));
-			((TextView) findViewById(R.id.reminderDay)).setText(_selected.get("day"));
-			((TextView) findViewById(R.id.reminderYear)).setText(_selected.get("year"));
-			((TextView) findViewById(R.id.reminderTime)).setText(_selected.get("time"));
-		
-		}
+
+			}
+		} 
 		
 	}
 	

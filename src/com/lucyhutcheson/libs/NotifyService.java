@@ -92,6 +92,7 @@ public class NotifyService extends Service {
 		
 		// This is the 'title' of the notification
 		CharSequence title = intent.getCharSequenceExtra(INTENT_TITLE);
+		Log.i("NOTIFY SERVICE", "Setalarmfornotification: " + title);
 		// This is the icon to use on the notification
 		int icon = R.drawable.ic_launcher;
 		// This is the scrolling text of the notification
@@ -106,7 +107,7 @@ public class NotifyService extends Service {
 		_intent.putExtra(INTENT_ID, NOTIFICATION_ID);
 		_intent.setAction("houseBoss"+NOTIFICATION_ID);
 		_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, _intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, _intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		_intent.setData(Uri.parse("houseBoss"+NOTIFICATION_ID));
 		
 		//Notification notification = new Notification(icon, text, time);

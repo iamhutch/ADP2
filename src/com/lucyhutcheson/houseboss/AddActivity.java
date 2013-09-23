@@ -21,7 +21,6 @@ import java.util.Random;
 
 import com.lucyhutcheson.libs.DatePickerFragment;
 import com.lucyhutcheson.libs.FileFunctions;
-import com.lucyhutcheson.libs.ReminderSingleton;
 import com.lucyhutcheson.libs.ScheduleClient;
 import com.lucyhutcheson.libs.TimePickerFragment;
 
@@ -68,6 +67,7 @@ public class AddActivity extends Activity {
 	Spinner _category;
 	private ArrayList<HashMap<String, String>> _reminders;
 	public static final String REMINDER_FILENAME = "reminders";
+	private String _reminderTitle;
 
 	/*
 	 * (non-Javadoc)
@@ -84,7 +84,8 @@ public class AddActivity extends Activity {
 		_descriptionField = (EditText) findViewById(R.id.descriptionField);
 		_dateField = (EditText) findViewById(R.id.dateField);
 		_timeField = (EditText) findViewById(R.id.timeField);
-
+		_reminderTitle = null;
+		
 		// Add today's date and time to the text fields
 		Time today = new Time(Time.getCurrentTimezone());
 		today.setToNow();
@@ -155,15 +156,17 @@ public class AddActivity extends Activity {
 				e.printStackTrace();
 			}
 
+			// SETUP OUR VARIABLES TO BE SAVED
 			String convertedTime = convertTime(_hour, _minute);
 			Random _Id = new Random();
 			int _reminderID = _Id.nextInt();
+			_reminderTitle = _titleField.getText().toString();
+			Log.i("ADD ACTIVITY", "Reminder Title: "+ _reminderTitle);
 			String _reminderDate = _year + "-" + _month + "-" + _day + " " + _hour + ":" + _minute;
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 			try {
 				_myReminderDate = dateFormat.parse(_reminderDate);
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -184,7 +187,6 @@ public class AddActivity extends Activity {
 			_newReminder.put("fulldate", _myReminderDate.toString());
 
 			// STORE DATA IN SINGLETON AND FILE STORAGE
-			ReminderSingleton.getInstance().set_reminder(_newReminder);
 			_reminders.add(_newReminder);
 			FileFunctions.storeObjectFile(getApplicationContext(),
 					REMINDER_FILENAME, _reminders, false);
@@ -197,11 +199,11 @@ public class AddActivity extends Activity {
 			_c.set(Calendar.MINUTE, _minute);
 			_c.set(Calendar.SECOND, 0);
 			
-			String _reminderTitle = _titleField.getText().toString();
 
 			// Ask our service to set an alarm for that date, this activity
 			// talks to the client that talks to the service
 			scheduleClient.setAlarmForNotification(_c, _reminderID, _reminderTitle);
+			Log.i(TAG, "Setalarmfornotification: " + _reminderTitle);
 
 			// Notify the user what they just did
 			Toast.makeText(

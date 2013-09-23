@@ -123,7 +123,6 @@ public class MainActivity extends Activity {
 		super.onStart();
 		
 		try {
-			Log.i("VIEW ACTIVITY", "TRYING");
 			try {
 				_reminderArrayList = getSavedReminders();
 				
@@ -136,7 +135,7 @@ public class MainActivity extends Activity {
 			
 			if (_reminderArrayList != null) {
 				
-				Collections.sort(_reminderArrayList, new MapComparator("fulldate"));
+				//Collections.sort(_reminderArrayList, new MapComparator());
 				
 				// ATTACH LIST ADAPTER
 				_reminderList = (ListView) findViewById(R.id.listview);
@@ -196,14 +195,14 @@ public class MainActivity extends Activity {
 					@Override
 					public void onItemClick(AdapterView<?> parent,
 							final View view, int position, long id) {
-						Log.i(TAG, "CLICKED " + Integer.toString(position));
+						//Log.i(TAG, "CLICKED " + Integer.toString(position));
 						HashMap<String, String> selected = _reminderArrayList
 								.get(position);
 						ReminderSingleton.getInstance().set_reminder(selected);
 
 						// INTENT TO START VIEW ACTIVITY
-						Intent intent = new Intent(MainActivity.this,
-								ViewActivity.class);
+						Intent intent = new Intent(MainActivity.this, ViewActivity.class);
+						intent.putExtra(ViewActivity.INTENT_VIEW, true);
 						MainActivity.this.startActivity(intent);
 
 					}
@@ -218,7 +217,7 @@ public class MainActivity extends Activity {
 	 * 
 	 * @return hashmap of our favorites data
 	 */
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings("unchecked")
 	public static ArrayList<HashMap<String, String>> getSavedReminders() {
 		Log.i("GET SAVED REMINDERS", "TRYING");
 
@@ -227,7 +226,7 @@ public class MainActivity extends Activity {
 		 */
 		Object stored = FileFunctions.readObjectFile(_context,
 				AddActivity.REMINDER_FILENAME, false);
-		Log.i(TAG, stored.toString());
+		//Log.i(TAG, stored.toString());
 		ArrayList<HashMap<String, String>> _remindersList = null;
 
 		// CHECK IF OBJECT EXISTS
@@ -296,18 +295,9 @@ public class MainActivity extends Activity {
 
 class MapComparator implements Comparator<HashMap<String, String>>
 {
-    private final String key;
-
-    public MapComparator(String key)
-    {
-        this.key = key;
-    }
-
 	@Override
 	public int compare(HashMap<String, String> first, HashMap<String, String> second) {
-        String firstValue = first.get(key);
-        String secondValue = second.get(key);
-        return firstValue.compareTo(secondValue);
+        return first.get("fulldate").compareTo(second.get("fulldate"));
 	}
 }
 

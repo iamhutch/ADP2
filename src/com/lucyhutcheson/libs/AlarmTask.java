@@ -38,6 +38,7 @@ public class AlarmTask implements Runnable {
 		this._id = id;
 		this._title = title;
 		Log.i("ALARM TASK", "ID: " + Integer.toString(id) + " to ID: " + Integer.toString(_id));
+		Log.i("ALARM TASK", "FROM TITLE: " + title + "TO " + _title);
 	
 
 	}
@@ -51,7 +52,7 @@ public class AlarmTask implements Runnable {
 		intent.putExtra(NotifyService.INTENT_NOTIFY, true);
 		intent.putExtra(NotifyService.INTENT_ID, _id);
 		intent.putExtra(NotifyService.INTENT_TITLE, _title);
-		PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+		PendingIntent pendingIntent = PendingIntent.getService(context, (int) System.currentTimeMillis(), intent, 0);
 
 		// Sets an alarm - note this alarm will be lost if the phone is turned
 		// off and on again
