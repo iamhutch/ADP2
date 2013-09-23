@@ -11,6 +11,8 @@
 package com.lucyhutcheson.houseboss;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.json.JSONException;
@@ -19,6 +21,7 @@ import org.json.JSONObject;
 import com.lucyhutcheson.libs.AppPreferences;
 import com.lucyhutcheson.libs.FileFunctions;
 import com.lucyhutcheson.libs.GetDataService;
+import com.lucyhutcheson.libs.ReminderSingleton;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,17 +36,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * Main Class that handles the weather display as well as the list
- * of reminders that the user has saved.
+ * Main Class that handles the weather display as well as the list of reminders
+ * that the user has saved.
  */
 public class MainActivity extends Activity {
-	
+
 	// VARIABLES SETUP
 	public static final String TAG = "MainActivity";
 	private AppPreferences _appPrefs;
@@ -52,10 +56,12 @@ public class MainActivity extends Activity {
 	ListView _reminderList;
 	SimpleAdapter _adapter;
 	ArrayList<HashMap<String, String>> _reminderArrayList;
-	static final String[] _from = new String[] { "title", "month", "day", "year", "hour", "minute"};
-	static final int[] _to = new int[] { R.id.reminderTitle, R.id.reminderMonth, R.id.reminderDay, R.id.reminderYear, R.id.reminderHour, R.id.reminderMinute};
+	static final String[] _from = new String[] { "title", "month", "day",
+			"year", "time" };
+	static final int[] _to = new int[] { R.id.reminderTitle,
+			R.id.reminderMonth, R.id.reminderDay, R.id.reminderYear,
+			R.id.reminderTime };
 
-	
 	// Handle communication between this activity and
 	// GetDataService class
 	@SuppressLint("HandlerLeak")
@@ -65,27 +71,30 @@ public class MainActivity extends Activity {
 
 			Log.i(TAG, "HANDLER STARTED");
 
-			if (mymessage.arg1 == RESULT_OK	&& mymessage.obj != null) {
-		        //Log.i("RESPONSE", mymessage.obj.toString());
+			if (mymessage.arg1 == RESULT_OK && mymessage.obj != null) {
+				// Log.i("RESPONSE", mymessage.obj.toString());
 				JSONObject json = null;
 				try {
 					json = new JSONObject(mymessage.obj.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				//Log.i("UPDATE WITH JSON", json.toString());
+				// Log.i("UPDATE WITH JSON", json.toString());
 				updateWeather(json);
-				
-			} else if (mymessage.arg1 == RESULT_CANCELED && mymessage.obj != null){
-				Toast.makeText(MainActivity.this,mymessage.obj.toString(), Toast.LENGTH_LONG).show();
+
+			} else if (mymessage.arg1 == RESULT_CANCELED
+					&& mymessage.obj != null) {
+				Toast.makeText(MainActivity.this, mymessage.obj.toString(),
+						Toast.LENGTH_LONG).show();
 
 			} else {
-				Toast.makeText(MainActivity.this,"Download failed.", Toast.LENGTH_LONG).show();
-			}	
+				Toast.makeText(MainActivity.this, "Download failed.",
+						Toast.LENGTH_LONG).show();
+			}
 		}
 
 	};
-	
+
 	/**
 	 * Updates all weather textviews with received JSON data.
 	 * 
@@ -93,21 +102,22 @@ public class MainActivity extends Activity {
 	 *            the data
 	 */
 	public void updateWeather(JSONObject data) {
-		//Log.i("UPDATE DATA", data.toString());
+		// Log.i("UPDATE DATA", data.toString());
 		try {
 			JSONObject city = data.getJSONObject("display_location");
 			String forecast = data.getString("temp_f");
-			//Log.i(TAG, forecast);
-			((TextView) findViewById(R.id.forecast)).setText(forecast +  (char) 0x00B0);
-			((TextView) findViewById(R.id.city)).setText(city.getString("full"));
+			// Log.i(TAG, forecast);
+			((TextView) findViewById(R.id.forecast)).setText(forecast
+					+ (char) 0x00B0);
+			((TextView) findViewById(R.id.city))
+					.setText(city.getString("full"));
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 			Log.e("JSON ERROR", e.toString());
 		}
 	}
-	
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
@@ -116,6 +126,7 @@ public class MainActivity extends Activity {
 			Log.i("VIEW ACTIVITY", "TRYING");
 			try {
 				_reminderArrayList = getSavedReminders();
+				
 				Log.i(TAG, _reminderArrayList.toString());
 				
 			} catch (Exception e) {
@@ -124,6 +135,9 @@ public class MainActivity extends Activity {
 			}
 			
 			if (_reminderArrayList != null) {
+				
+				Collections.sort(_reminderArrayList, new MapComparator("fulldate"));
+				
 				// ATTACH LIST ADAPTER
 				_reminderList = (ListView) findViewById(R.id.listview);
 				SimpleAdapter _myAdapter = new SimpleAdapter(_context, _reminderArrayList, R.layout.activity_main_row, _from, _to);
@@ -136,8 +150,9 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
@@ -145,28 +160,56 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		_context = this;
-		
+
 		// GET WEATHER DATA BASED ON SAVED ZIP CODE IN SHARED PREFS
 		_appPrefs = new AppPreferences(getApplicationContext());
 		if (_appPrefs.getZip().length() > 0) {
-			
+
 			// GET OUR ZIP CODE
 			_zipCode = _appPrefs.getZip();
-			
+
 			// GET WEATHER INFORMATION BASED ON ZIP CODE IN SHARED PREFERENCES
 			Messenger messenger = new Messenger(searchServiceHandler);
-			Intent startServiceIntent = new Intent(getApplicationContext(), GetDataService.class);
-			startServiceIntent.putExtra(GetDataService.MESSENGER_KEY,messenger);
-			startServiceIntent.setData(Uri.parse("http://api.wunderground.com/api/c6dc8ff98c36bc6c/conditions/q/"+Uri.encode(_zipCode)+".json"));
+			Intent startServiceIntent = new Intent(getApplicationContext(),
+					GetDataService.class);
+			startServiceIntent
+					.putExtra(GetDataService.MESSENGER_KEY, messenger);
+			startServiceIntent
+					.setData(Uri
+							.parse("http://api.wunderground.com/api/c6dc8ff98c36bc6c/conditions/q/"
+									+ Uri.encode(_zipCode) + ".json"));
 			startService(startServiceIntent);
-			
+
 		} else {
-    		Log.i(TAG, "Zip field is empty.");
-			
-    		// ALERT USER THAT THERE IS NO ZIP SAVED
-			Toast.makeText(this, "No zip code saved. Please add one in app Settings.", Toast.LENGTH_LONG).show();
+			Log.i(TAG, "Zip field is empty.");
+
+			// ALERT USER THAT THERE IS NO ZIP SAVED
+			Toast.makeText(this,
+					"No zip code saved. Please add one in app Settings.",
+					Toast.LENGTH_LONG).show();
 		}
-		
+		_reminderList = (ListView) findViewById(R.id.listview);
+
+		_reminderList
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent,
+							final View view, int position, long id) {
+						Log.i(TAG, "CLICKED " + Integer.toString(position));
+						HashMap<String, String> selected = _reminderArrayList
+								.get(position);
+						ReminderSingleton.getInstance().set_reminder(selected);
+
+						// INTENT TO START VIEW ACTIVITY
+						Intent intent = new Intent(MainActivity.this,
+								ViewActivity.class);
+						MainActivity.this.startActivity(intent);
+
+					}
+
+				});
+
 	}
 
 	/**
@@ -178,12 +221,12 @@ public class MainActivity extends Activity {
 	@SuppressWarnings({ "unchecked", "unused" })
 	public static ArrayList<HashMap<String, String>> getSavedReminders() {
 		Log.i("GET SAVED REMINDERS", "TRYING");
-		
-		
-		/* 
+
+		/*
 		 * GET STORED DATA FROM REMINDERS FILE
 		 */
-		Object stored = FileFunctions.readObjectFile(_context, AddActivity.REMINDER_FILENAME, false);
+		Object stored = FileFunctions.readObjectFile(_context,
+				AddActivity.REMINDER_FILENAME, false);
 		Log.i(TAG, stored.toString());
 		ArrayList<HashMap<String, String>> _remindersList = null;
 
@@ -199,21 +242,11 @@ public class MainActivity extends Activity {
 		}
 		return _remindersList;
 
-		
-		/*
-		// CAST ARRAYLIST
-		try {
-			_remindersList = (ArrayList<HashMap<String, String>>) stored;
-			Log.i(TAG, _remindersList.toString());
-		} catch (Exception e) {
-			Log.e("REMINDERS FOUND","ERROR");
-			e.printStackTrace();
-		}
-				
-		return _remindersList;*/
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */
 	@Override
@@ -223,7 +256,9 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
 	 */
 	@Override
@@ -248,12 +283,31 @@ public class MainActivity extends Activity {
 		MainActivity.this.startActivity(intent);
 	}
 
-	// IF USER CLICKS SETTINGS  FROM MAIN ACTION BAR
+	// IF USER CLICKS SETTINGS FROM MAIN ACTION BAR
 	public void onSettingsActivity() {
-		Toast.makeText(this, "Settings screen not yet available.", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Settings screen not yet available.",
+				Toast.LENGTH_SHORT).show();
 		// INTENT TO START ADD ACTIVITY
-		//Intent intent = new Intent(MainActivity.this, AddActivity.class);
-		//MainActivity.this.startActivity(intent);
+		// Intent intent = new Intent(MainActivity.this, AddActivity.class);
+		// MainActivity.this.startActivity(intent);
 	}
 
 }
+
+class MapComparator implements Comparator<HashMap<String, String>>
+{
+    private final String key;
+
+    public MapComparator(String key)
+    {
+        this.key = key;
+    }
+
+	@Override
+	public int compare(HashMap<String, String> first, HashMap<String, String> second) {
+        String firstValue = first.get(key);
+        String secondValue = second.get(key);
+        return firstValue.compareTo(secondValue);
+	}
+}
+

@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 public class ScheduleClient {
 
@@ -72,8 +73,9 @@ public class ScheduleClient {
 	 * @param c
 	 *            a date to set the notification for
 	 */
-	public void setAlarmForNotification(Calendar c) {
-		mBoundService.setAlarm(c);
+	public void setAlarmForNotification(Calendar c, int _reminderID, String _reminderTitle) {
+		Log.i("SCHEDULE CLIENT", "ID: " + Integer.toString(_reminderID));
+		mBoundService.setAlarm(c, _reminderID, _reminderTitle);
 	}
 
 	/**

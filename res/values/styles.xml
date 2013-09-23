@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="HouseBossBase" parent="android:Theme.Holo"></style>
+    <style name="HouseBossBase" parent="android:Theme.Holo.Light.DarkActionBar"></style>
 
     <!-- Application theme. -->
     <style name="HouseBoss.WeatherCity" parent="HouseBossBase">
@@ -74,8 +74,23 @@
 
     <style name="HouseBoss.ReminderTitle" parent="HouseBossBase">
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@android:color/black</item>
         <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="HouseBoss.ReminderInfo" parent="HouseBossBase">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="HouseBoss.reminderDescription" parent="HouseBossBase">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
 </resources>

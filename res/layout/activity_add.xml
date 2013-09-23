@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/bg"
     android:orientation="vertical"
     android:padding="20dp" >
@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_marginTop="50dp"
-            android:background="@drawable/darkrectangle"
+            android:background="@drawable/roundedrectangle"
             android:orientation="vertical" >
 
             <EditText
@@ -24,11 +24,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/what_do_you_need_to_do_"
+                android:inputType="textCapSentences"
                 android:padding="15dp" />
 
             <EditText
                 android:id="@+id/descriptionField"
                 android:layout_width="match_parent"
+                android:inputType="textCapSentences"
                 android:layout_height="wrap_content"
                 android:hint="@string/size_brand_"
                 android:padding="15dp" />

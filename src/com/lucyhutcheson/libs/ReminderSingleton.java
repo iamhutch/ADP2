@@ -10,7 +10,6 @@
  */
 package com.lucyhutcheson.libs;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -22,7 +21,7 @@ public class ReminderSingleton {
 	// Will hold single instance of this class
 	private static ReminderSingleton _instance = null;
 	// Will hold data for reminders
-	private ArrayList<HashMap<String, String>> _reminderArrayList = new ArrayList<HashMap<String, String>>();
+	private HashMap<String, String> _reminderHashMap = new HashMap<String, String>();
 	
 	
 	/**
@@ -56,8 +55,8 @@ public class ReminderSingleton {
 	 * *************************.
 	 *
 	 */
-	public ArrayList<HashMap<String, String>> get_reminder(){
-		return _reminderArrayList;
+	public HashMap<String, String> get_reminder(){
+		return _reminderHashMap;
 	}
 	
 	/**
@@ -67,6 +66,6 @@ public class ReminderSingleton {
 	 */
 
 	public void set_reminder(HashMap<String, String> hashMap) {
-		_reminderArrayList.add(hashMap);
+		_reminderHashMap.putAll(hashMap);
 	}
 }
