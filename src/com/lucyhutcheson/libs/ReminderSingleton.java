@@ -22,6 +22,7 @@ public class ReminderSingleton {
 	private static ReminderSingleton _instance = null;
 	// Will hold data for reminders
 	private HashMap<String, String> _reminderHashMap = new HashMap<String, String>();
+	private HashMap<String, HashMap<String, String>> _remindersHashMap = new HashMap<String, HashMap<String, String>>();
 	
 	
 	/**
@@ -58,6 +59,9 @@ public class ReminderSingleton {
 	public HashMap<String, String> get_reminder(){
 		return _reminderHashMap;
 	}
+	public HashMap<String, HashMap<String,String>> get_reminders(){
+		return _remindersHashMap;
+	}
 	
 	/**
 	 * Set_movies.
@@ -68,4 +72,8 @@ public class ReminderSingleton {
 	public void set_reminder(HashMap<String, String> hashMap) {
 		_reminderHashMap.putAll(hashMap);
 	}
+	public void set_reminders(HashMap<String, HashMap<String,String>> hashMap) {
+		_remindersHashMap.putAll(hashMap);
+	}
+
 }

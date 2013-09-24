@@ -39,7 +39,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="AddActivity"
+            android:name="com.lucyhutcheson.houseboss.AddActivity"
             android:parentActivityName="com.lucyhutcheson.houseboss.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" >
@@ -48,7 +48,7 @@
                 android:value="com.lucyhutcheson.houseboss.MainActivity" />
         </activity>
         <activity
-            android:name="ViewActivity"
+            android:name="com.lucyhutcheson.houseboss.ViewActivity"
             android:launchMode="singleTop"
             android:parentActivityName="com.lucyhutcheson.houseboss.MainActivity"
             android:screenOrientation="portrait" >
@@ -63,6 +63,15 @@
         </service>
         <service android:name="com.lucyhutcheson.libs.NotifyService" >
         </service>
+
+        <activity
+            android:name="com.lucyhutcheson.houseboss.SettingsActivity"
+            android:parentActivityName="com.lucyhutcheson.houseboss.MainActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>

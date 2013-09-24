@@ -11,7 +11,6 @@
 package com.lucyhutcheson.houseboss;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
@@ -201,7 +200,8 @@ public class MainActivity extends Activity {
 						ReminderSingleton.getInstance().set_reminder(selected);
 
 						// INTENT TO START VIEW ACTIVITY
-						Intent intent = new Intent(MainActivity.this, ViewActivity.class);
+						Intent intent = new Intent(MainActivity.this,
+								ViewActivity.class);
 						intent.putExtra(ViewActivity.INTENT_VIEW, true);
 						MainActivity.this.startActivity(intent);
 
@@ -217,7 +217,7 @@ public class MainActivity extends Activity {
 	 * 
 	 * @return hashmap of our favorites data
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	public static ArrayList<HashMap<String, String>> getSavedReminders() {
 		Log.i("GET SAVED REMINDERS", "TRYING");
 
@@ -226,7 +226,7 @@ public class MainActivity extends Activity {
 		 */
 		Object stored = FileFunctions.readObjectFile(_context,
 				AddActivity.REMINDER_FILENAME, false);
-		//Log.i(TAG, stored.toString());
+		Log.i(TAG, stored.toString());
 		ArrayList<HashMap<String, String>> _remindersList = null;
 
 		// CHECK IF OBJECT EXISTS
@@ -284,11 +284,9 @@ public class MainActivity extends Activity {
 
 	// IF USER CLICKS SETTINGS FROM MAIN ACTION BAR
 	public void onSettingsActivity() {
-		Toast.makeText(this, "Settings screen not yet available.",
-				Toast.LENGTH_SHORT).show();
 		// INTENT TO START ADD ACTIVITY
-		// Intent intent = new Intent(MainActivity.this, AddActivity.class);
-		// MainActivity.this.startActivity(intent);
+		Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+		MainActivity.this.startActivity(intent);
 	}
 
 }

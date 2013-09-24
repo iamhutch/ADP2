@@ -76,15 +76,17 @@ public final class R {
         public static final int activity_add=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int activity_main_row=0x7f030002;
-        public static final int activity_setup=0x7f030003;
-        public static final int activity_splash=0x7f030004;
-        public static final int activity_view=0x7f030005;
+        public static final int activity_settings=0x7f030003;
+        public static final int activity_setup=0x7f030004;
+        public static final int activity_splash=0x7f030005;
+        public static final int activity_view=0x7f030006;
     }
     public static final class menu {
         public static final int add_action_bar=0x7f080000;
         public static final int main=0x7f080001;
         public static final int main_action_bar=0x7f080002;
-        public static final int view_action_bar=0x7f080003;
+        public static final int settings=0x7f080003;
+        public static final int view_action_bar=0x7f080004;
     }
     public static final class string {
         public static final int action_settings=0x7f060001;
@@ -103,6 +105,7 @@ public final class R {
         public static final int pick_a_date=0x7f060013;
         public static final int pick_a_time=0x7f060014;
         public static final int please_enter_your_zip_code_=0x7f060004;
+        public static final int settings=0x7f060019;
         public static final int setup=0x7f060008;
         public static final int size_brand_=0x7f06000c;
         public static final int skip=0x7f060006;

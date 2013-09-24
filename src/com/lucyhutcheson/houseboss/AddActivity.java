@@ -68,6 +68,7 @@ public class AddActivity extends Activity {
 	private ArrayList<HashMap<String, String>> _reminders;
 	public static final String REMINDER_FILENAME = "reminders";
 	private String _reminderTitle;
+	ArrayList<HashMap<String,HashMap<String, String>>> _reminderList;
 
 	/*
 	 * (non-Javadoc)
@@ -144,6 +145,7 @@ public class AddActivity extends Activity {
 		// ALL NECESSARY DATA HAS BEEN ENTERED, PROCEED WITH SAVING
 		} else {
 			_reminders = new ArrayList<HashMap<String, String>>();
+			_reminderList = new ArrayList<HashMap<String,HashMap<String, String>>>();
 
 			/*
 			 * PULL SAVED DATA FIRST AND THEN ADD OUR NEW DATA
@@ -185,6 +187,9 @@ public class AddActivity extends Activity {
 			_newReminder.put("minute", Integer.toString(_minute));
 			_newReminder.put("time", convertedTime);
 			_newReminder.put("fulldate", _myReminderDate.toString());
+			
+			HashMap<String, HashMap<String,String>> _reminderItem = new HashMap<String,HashMap<String,String>>();
+			_reminderItem.put(String.valueOf(_reminderID), _newReminder);
 
 			// STORE DATA IN SINGLETON AND FILE STORAGE
 			_reminders.add(_newReminder);

@@ -26,5 +26,6 @@
     <string name="slash">/</string>
     <string name="icon">Icon</string>
     <string name="colon">:</string>
+    <string name="settings">Settings</string>
 
 </resources>
