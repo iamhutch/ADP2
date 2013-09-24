@@ -36,10 +36,12 @@ public class ViewActivity extends Activity {
 	public final static String TAG = "VIEWACTIVITY";
 	public static final String INTENT_VIEW = "com.lucyhutcheson.houseboss.INTENT_VIEW";
 	ArrayList<HashMap<String, String>> _reminderArrayList;
+	String _viewingID;
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
 	    super.onNewIntent(intent);
+	    Log.i(TAG, "ON NEW INTENT");
 	    setIntent(intent);
 	}
 	
@@ -51,7 +53,7 @@ public class ViewActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(TAG, "STARTING ACTIVITY");
+		//Log.i(TAG, "STARTING ACTIVITY");
 		setContentView(R.layout.activity_view);
 
 		Bundle extras = getIntent().getExtras();
@@ -67,16 +69,17 @@ public class ViewActivity extends Activity {
 				((TextView) findViewById(R.id.reminderDay)).setText(_selected.get("day"));
 				((TextView) findViewById(R.id.reminderYear)).setText(_selected.get("year"));
 				((TextView) findViewById(R.id.reminderTime)).setText(_selected.get("time"));
+				_viewingID = _selected.get("id");
 				
 				
 			// OTHERWISE, WE ARE HERE BECAUSE OF A NOTIFICATION
 			} else {
 				int _id = extras.getInt(NotifyService.INTENT_ID);
-				Log.i(TAG, Integer.toString(_id));
+				//Log.i(TAG, Integer.toString(_id));
 				try {
 					// GET OUR SAVED REMINDERS
 					_reminderArrayList = MainActivity.getSavedReminders();
-					Log.i(TAG, _reminderArrayList.toString());
+					//Log.i(TAG, _reminderArrayList.toString());
 					
 					// FIND OUR NEEDED REMINDER BASED ON THE ID PASSED FROM NOTIFICATION
 					for(HashMap<String,String> _selected:_reminderArrayList) 
@@ -88,20 +91,16 @@ public class ViewActivity extends Activity {
 							((TextView) findViewById(R.id.reminderDay)).setText(_selected.get("day"));
 							((TextView) findViewById(R.id.reminderYear)).setText(_selected.get("year"));
 							((TextView) findViewById(R.id.reminderTime)).setText(_selected.get("time"));
+							_viewingID = _selected.get("id");
 						}
-					
 				} catch (Exception e) {
 					Log.e(TAG, "Error getting reminders");
 					e.printStackTrace();
 				}
-
-
 			}
 		} 
-		
 	}
 	
-
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
@@ -144,10 +143,10 @@ public class ViewActivity extends Activity {
 	 * IF USER CLICKS EDIT ICON FROM MAIN ACTION BAR
 	 */
 	public void onEdit() {
-		Toast.makeText(this, "Edit function not yet available.", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Edit function not yet available for " + _viewingID, Toast.LENGTH_SHORT).show();
 		// INTENT TO START ADD ACTIVITY
-		//Intent intent = new Intent(MainActivity.this, AddActivity.class);
-		//MainActivity.this.startActivity(intent);
+		Intent intent = new Intent(ViewActivity.this, EditActivity.class);
+		ViewActivity.this.startActivity(intent);
 	}
 
 	

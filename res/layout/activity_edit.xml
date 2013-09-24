@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    android:orientation="vertical"
+    android:padding="20dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/roundedrectangle"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/titleField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/what_do_you_need_to_do_"
+                android:inputType="textCapSentences"
+                android:padding="15dp" />
+
+            <EditText
+                android:id="@+id/descriptionField"
+                android:layout_width="match_parent"
+                android:inputType="textCapSentences"
+                android:layout_height="wrap_content"
+                android:hint="@string/size_brand_"
+                android:padding="15dp" />
+
+            <EditText
+                android:id="@+id/dateField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:padding="15dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pick_a_date"
+                android:onClick="showDatePickerDialog" />
+
+            <EditText
+                android:id="@+id/timeField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="time"
+                android:padding="15dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="showTimePickerDialog"
+                android:text="@string/pick_a_time" />
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                style="@style/HouseBoss.spinnerStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:prompt="@string/interior_or_exterior_"
+                android:spinnerMode="dialog" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/HouseBoss.PageTitle"
+            android:layout_above="@id/content"
+            android:text="@string/edit_reminder" />
+    </RelativeLayout>
+
+</ScrollView>

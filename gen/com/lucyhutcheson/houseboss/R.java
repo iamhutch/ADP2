@@ -74,19 +74,21 @@ public final class R {
     }
     public static final class layout {
         public static final int activity_add=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int activity_main_row=0x7f030002;
-        public static final int activity_settings=0x7f030003;
-        public static final int activity_setup=0x7f030004;
-        public static final int activity_splash=0x7f030005;
-        public static final int activity_view=0x7f030006;
+        public static final int activity_edit=0x7f030001;
+        public static final int activity_main=0x7f030002;
+        public static final int activity_main_row=0x7f030003;
+        public static final int activity_settings=0x7f030004;
+        public static final int activity_setup=0x7f030005;
+        public static final int activity_splash=0x7f030006;
+        public static final int activity_view=0x7f030007;
     }
     public static final class menu {
         public static final int add_action_bar=0x7f080000;
-        public static final int main=0x7f080001;
-        public static final int main_action_bar=0x7f080002;
-        public static final int settings=0x7f080003;
-        public static final int view_action_bar=0x7f080004;
+        public static final int edit_action_bar=0x7f080001;
+        public static final int main=0x7f080002;
+        public static final int main_action_bar=0x7f080003;
+        public static final int settings=0x7f080004;
+        public static final int view_action_bar=0x7f080005;
     }
     public static final class string {
         public static final int action_settings=0x7f060001;
@@ -96,6 +98,7 @@ public final class R {
         public static final int cancel=0x7f06000b;
         public static final int colon=0x7f060018;
         public static final int date=0x7f06000f;
+        public static final int edit_reminder=0x7f06001b;
         public static final int hello_world=0x7f060002;
         public static final int house_boss=0x7f060003;
         public static final int icon=0x7f060017;
@@ -113,6 +116,7 @@ public final class R {
         public static final int start=0x7f060011;
         public static final int submit=0x7f060007;
         public static final int time=0x7f060010;
+        public static final int title_activity_edit=0x7f06001a;
         public static final int what_do_you_need_to_do_=0x7f06000d;
         public static final int zip_code=0x7f060005;
     }
