@@ -214,39 +214,7 @@ public class MainActivity extends Activity {
 
 	}
 
-	/**
-	 * Function to get read the favorites file which contains any dining data
-	 * that was saved as a favorite.
-	 * 
-	 * @return hashmap of our favorites data
-	 */
-	@SuppressWarnings({ "unchecked", "unused" })
-	public static ArrayList<HashMap<String, String>> getSavedReminders() {
-		Log.i("GET SAVED REMINDERS", "TRYING");
 
-		/*
-		 * GET STORED DATA FROM REMINDERS FILE
-		 */
-		Object stored = FileFunctions.readObjectFile(_context,
-				AddActivity.REMINDER_FILENAME, false);
-		Log.i(TAG, stored.toString());
-		ArrayList<HashMap<String, String>> _remindersList = null;
-
-		// CHECK IF OBJECT EXISTS
-		if (stored == null) {
-			Log.i("HOUSEBOSS", "NO REMINDERS FILE FOUND");
-			_remindersList = new ArrayList<HashMap<String, String>>();
-		}
-		// IF OBJECT EXISTS, BRING IN DATA AND ADD TO HASHMAP
-		else {
-			// CAST HASHMAP
-			_remindersList = (ArrayList<HashMap<String, String>>) stored;
-		}
-		return _remindersList;
-
-	}
-
-	
 	/**
 	 * Function to get read the favorites file which contains any dining data
 	 * that was saved as a favorite.

@@ -13,6 +13,7 @@ import android.widget.DatePicker;
 public class EditDatePickerFragment extends DialogFragment implements
 		DatePickerDialog.OnDateSetListener {
 	
+	public DatePickerDialog _dialog;
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -25,11 +26,11 @@ public class EditDatePickerFragment extends DialogFragment implements
 		long longDate = c.getTime().getTime();
 		
 
-		DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
-		dialog.getDatePicker().setMinDate(longDate);
+		_dialog = new DatePickerDialog(getActivity(), this, year, month, day);
+		_dialog.getDatePicker().setMinDate(longDate);
 		
 		// Create a new instance of DatePickerDialog and return it
-		return dialog;
+		return _dialog;
 	}
 
 
@@ -37,6 +38,11 @@ public class EditDatePickerFragment extends DialogFragment implements
 	public void onDateSet(DatePicker view, int year, int monthOfYear,
 			int dayOfMonth) {
 			EditActivity.setDate(year, monthOfYear, dayOfMonth);
+	}
+	
+	public void setDatePicker(int year, int month, int day) {
+		_dialog = new DatePickerDialog(getActivity(), this, year, month, day);
+		_dialog.getDatePicker().updateDate(year, month, day);
 	}
 
 }

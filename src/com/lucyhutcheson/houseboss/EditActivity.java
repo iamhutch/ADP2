@@ -6,18 +6,27 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.lucyhutcheson.libs.EditDatePickerFragment;
 import com.lucyhutcheson.libs.EditTimePickerFragment;
 import com.lucyhutcheson.libs.FileFunctions;
+import com.lucyhutcheson.libs.NotifyService;
 import com.lucyhutcheson.libs.ReminderSingleton;
 import com.lucyhutcheson.libs.ScheduleClient;
 
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DialogFragment;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
@@ -45,20 +54,24 @@ public class EditActivity extends Activity {
 	static EditText _descriptionField;
 	static EditText _dateField;
 	static EditText _timeField;
-	private ArrayList<HashMap<String, HashMap<String,String>>> _reminderArrayList;
+	private ArrayList<HashMap<String, HashMap<String, String>>> _reminderArrayList;
 	private ArrayList<HashMap<String, String>> _reminders;
 	public static final String REMINDER_FILENAME = "reminders";
 	private String _reminderTitle;
 	private static Date _myReminderDate;
 	private String _categorySelected;
 	private Spinner _category;
-	private	String _reminderID;
+	private String _reminderID;
+	private int _intID;
+	ArrayList<HashMap<String, HashMap<String, String>>> _reminderMaster;
+	HashMap<String, HashMap<String, String>> _reminderList;
+	HashMap<String, String> _reminderItem;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		// SETUP ACTIVITY		
+
+		// SETUP ACTIVITY
 		setContentView(R.layout.activity_edit);
 		_titleField = (EditText) findViewById(R.id.titleField);
 		_descriptionField = (EditText) findViewById(R.id.descriptionField);
@@ -70,24 +83,25 @@ public class EditActivity extends Activity {
 		HashMap<String, String> myItem = ReminderSingleton.getInstance()
 				.get_reminder();
 		_reminderID = myItem.get("id");
-		Log.i(TAG, myItem.get("year"));
 
 		try {
-		    _hour = Integer.parseInt(myItem.get("hour"));
-		    _minute = Integer.parseInt(myItem.get("minute"));
-		    _month = Integer.parseInt(myItem.get("month"));
-		    _day = Integer.parseInt(myItem.get("day"));
-		    _year = Integer.parseInt(myItem.get("year"));
-		} catch(NumberFormatException nfe) {
-		   System.out.println("Could not parse " + nfe);
-		} 
+			_hour = Integer.parseInt(myItem.get("hour"));
+			_minute = Integer.parseInt(myItem.get("minute"));
+			_month = Integer.parseInt(myItem.get("month"));
+			_day = Integer.parseInt(myItem.get("day"));
+			_year = Integer.parseInt(myItem.get("year"));
+			_intID = Integer.parseInt(_reminderID);
+		} catch (NumberFormatException nfe) {
+			System.out.println("Could not parse " + nfe);
+		}
 
 		// ADD OUR EDITING VALUES TO OUR TEXT FIELDS
 		_titleField.setText(myItem.get("title"));
 		_descriptionField.setText(myItem.get("description"));
-		_dateField.setText(myItem.get("month") + "/" + myItem.get("day") + "/" + myItem.get("year"));
+		_dateField.setText(myItem.get("month") + "/" + myItem.get("day") + "/"
+				+ myItem.get("year"));
 		setTime(_hour, _minute);
-		
+
 		// SETUP CATEGORY SPINNER
 		List<String> SpinnerArray = new ArrayList<String>();
 		SpinnerArray.add("Interior");
@@ -115,12 +129,15 @@ public class EditActivity extends Activity {
 		// SET SPINNER TO OUR VALUE
 		_category.setSelection(getIndex(_category, myItem.get("category")));
 
+		// CREATE A NEW SERVICE CLIENT AND BIND OUR ACTIVITY TO THIS SERVICE
+		scheduleClient = new ScheduleClient(this);
+		scheduleClient.doBindService();
+
 	}
-	
-	
+
 	private int getIndex(Spinner spinner, String choice) {
 		int index = 0;
-		for (int i=0; i<spinner.getCount(); i++) {
+		for (int i = 0; i < spinner.getCount(); i++) {
 			if (spinner.getItemAtPosition(i).equals(choice)) {
 				index = i;
 			}
@@ -150,17 +167,16 @@ public class EditActivity extends Activity {
 
 			// ALL NECESSARY DATA HAS BEEN ENTERED, PROCEED WITH SAVING
 		} else {
-			_reminders = new ArrayList<HashMap<String, String>>();
+			_reminderMaster = new ArrayList<HashMap<String, HashMap<String, String>>>();
 
 			/*
 			 * PULL SAVED DATA FIRST AND THEN ADD OUR NEW DATA
 			 */
 			try {
-				_reminders.addAll(MainActivity.getSavedReminders());
-				Log.i(TAG, "SAVED STRING " + _reminders.toString());
+				_reminderMaster.addAll(MainActivity.getSavedReminderMaster());
+				Log.i(TAG, "SAVED STRING " + _reminderMaster.toString());
 			} catch (Exception e) {
 				Log.e("JSINTERFACE", "No saved data found.");
-				e.printStackTrace();
 			}
 
 			// SETUP OUR VARIABLES TO BE SAVED
@@ -180,26 +196,32 @@ public class EditActivity extends Activity {
 
 			// ADD OUR DATA TO A HASHMAP
 			HashMap<String, String> _newReminder = new HashMap<String, String>();
-			_newReminder.put("id", String.valueOf(_reminderID));
+			_newReminder.put("id", _reminderID);
 			_newReminder.put("title", _titleField.getText().toString());
 			_newReminder.put("description", _descriptionField.getText()
 					.toString());
 			_newReminder.put("category", _categorySelected);
 			_newReminder.put("year", Integer.toString(_year));
-			_newReminder.put("month", Integer.toString(_month + 1));
+			_newReminder.put("month", Integer.toString(_month));
 			_newReminder.put("day", Integer.toString(_day));
 			_newReminder.put("hour", Integer.toString(_hour));
 			_newReminder.put("minute", Integer.toString(_minute));
 			_newReminder.put("time", convertedTime);
 			_newReminder.put("fulldate", _myReminderDate.toString());
 
-			HashMap<String, HashMap<String, String>> _reminderItem = new HashMap<String, HashMap<String, String>>();
-			_reminderItem.put(String.valueOf(_reminderID), _newReminder);
+			// ADD OUR SINGLE ITEM TO OUR LIST INDEXED BY ID
+			_reminderList = new HashMap<String, HashMap<String, String>>();
+			_reminderList.put(_reminderID, _newReminder);
 
-			// STORE DATA IN SINGLETON AND FILE STORAGE
-			_reminders.add(_newReminder);
+			Log.i(TAG, "REMINDERMASTER: " + _reminderMaster.toString());
+
+			// ADD OUR REMINDER WITH ID HASH TO OUR MASTER LIST
+			_reminderMaster.add(_reminderList);
+
+			// STORE DATA IN FILE STORAGE
+			ReminderSingleton.getInstance().set_reminder(_newReminder);
 			FileFunctions.storeObjectFile(getApplicationContext(),
-					REMINDER_FILENAME, _reminders, false);
+					REMINDER_FILENAME, _reminderMaster, false);
 
 			// Create a new calendar set to the date chosen
 			// we set the time to midnight (i.e. the first minute of that day)
@@ -211,54 +233,67 @@ public class EditActivity extends Activity {
 
 			// Ask our service to set an alarm for that date, this activity
 			// talks to the client that talks to the service
-			// ScheduleClient.setAlarmForNotification(_c, _reminderID,
-			// _reminderTitle);
+			ScheduleClient.setAlarmForNotification(_c, _intID, _reminderTitle);
 			Log.i(TAG, "Setalarmfornotification: " + _reminderTitle);
 
 			// Notify the user what they just did
 			Toast.makeText(
 					this,
-					"Notification set for: " + (_month + 1) + "/" + _day + "/"
+					"Notification set for: " + _month + "/" + _day + "/"
 							+ _year + " " + convertedTime, Toast.LENGTH_SHORT)
 					.show();
 
 			// FINISH
+			Intent intent = new Intent();
+			intent.putExtra(ViewActivity.INTENT_VIEW, true);
 			((EditActivity) this).finish();
 		}
 
 	}
-	
-	public void deleteReminder() {
+
+	public void deleteReminder(String _ID) {
 
 		/*
 		 * PULL SAVED DATA FIRST AND THEN ADD OUR NEW DATA
 		 */
 		_reminderArrayList = MainActivity.getSavedReminderMaster();
 		_reminders = new ArrayList<HashMap<String, String>>();
-		Log.i(TAG, "AFTER DELETED STRING " + _reminderArrayList.toString());
+		Log.i(TAG, "REMINDER ARRAY LIST " + _reminderArrayList.toString());
 
 		// GO THROUGH THE ARRAYLIST
-		_reminderArrayList.remove(_reminderID);
-		/*for (HashMap<String, HashMap<String, String>> hashMap1 : _reminderArrayList) {
-			// GET THE VALUES
-			for (Map.Entry<String, HashMap<String, String>> entry : hashMap1
-					.entrySet()) {
-				// FIND THE ENTRY THAT MATCHES OUR ID
+		// _reminderArrayList.remove(_ID);
+		Log.i(TAG, "ID TO DELETE: " + _reminderID);
+		for (HashMap<String, HashMap<String, String>> hashMap1 : _reminderArrayList) {
+			for (Iterator<Entry<String, HashMap<String, String>>> it = hashMap1
+					.entrySet().iterator(); it.hasNext();) {
+				Entry<String, HashMap<String, String>> entry = it.next();
 				if (entry.getKey().equals(_reminderID)) {
-					
+					it.remove();
+					break;
 				}
 			}
-		}*/
+		}
+		Log.i(TAG, "REMINDER ARRAY LIST " + _reminderArrayList.toString());
+		
+		FileFunctions.storeObjectFile(getApplicationContext(),
+				REMINDER_FILENAME, _reminderArrayList, false);
 
-		
-		_reminders.remove(_reminderID);
-		Log.i(TAG, "AFTER DELETED STRING " + _reminders.toString());
-		
+
+		// CANCEL NOTIFICATION
+		resetAlarmForNotification(_intID);
+
+
 		// INTENT TO START MAIN ACTIVITY
 		Intent intent = new Intent(EditActivity.this, MainActivity.class);
 		EditActivity.this.startActivity(intent);
 		EditActivity.this.finish();
-		
+
+	}
+
+	public void resetAlarmForNotification(int uniqueId) {
+		((AlarmManager) getApplicationContext().getSystemService(
+				Context.ALARM_SERVICE)).cancel(PendingIntent.getService(this,
+				(int) uniqueId, new Intent(this, NotifyService.class), 0));
 	}
 
 	/**
@@ -297,7 +332,8 @@ public class EditActivity extends Activity {
 		_day = day;
 		_month = month;
 		_year = year;
-		_dateField.setText(Integer.toString(month + 1) + "/"+ Integer.toString(day) + "/" + Integer.toString(year));
+		_dateField.setText(Integer.toString(month + 1) + "/"
+				+ Integer.toString(day) + "/" + Integer.toString(year));
 	}
 
 	/**
@@ -313,7 +349,6 @@ public class EditActivity extends Activity {
 		_minute = minute;
 		// set current time into textview
 		_timeField.setText(convertTime(hourOfDay, minute));
-
 	}
 
 	/*
@@ -330,7 +365,7 @@ public class EditActivity extends Activity {
 			scheduleClient.doUnbindService();
 		super.onStop();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -356,10 +391,10 @@ public class EditActivity extends Activity {
 			EditActivity.this.finish();
 			return true;
 		case R.id.action_delete:
-			deleteReminder();
+			deleteReminder(_reminderID);
 			return true;
 		case R.id.action_save:
-			// onSubmit();
+			onSubmit();
 			return true;
 		case R.id.action_cancel:
 			EditActivity.this.finish();

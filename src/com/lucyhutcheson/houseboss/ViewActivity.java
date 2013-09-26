@@ -47,26 +47,19 @@ public class ViewActivity extends Activity {
 		setIntent(intent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		// Log.i(TAG, "STARTING ACTIVITY");
-		setContentView(R.layout.activity_view);
-		HashMap<String, String> _selected = new HashMap<String,String>();
-		
+	protected void onResume() {
+
+		super.onResume();
+		HashMap<String, String> _selected = new HashMap<String, String>();
+
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 
 			// CHECK IF WE ARE COMING FROM THE MAIN ACTIVITY
 			if (extras.getBoolean(INTENT_VIEW)) {
 				// ADD DATA FROM SINGLETON TO OUR TEXTVIEWS IN LAYOUT
-				_selected = ReminderSingleton
-						.getInstance().get_reminder();
+				_selected = ReminderSingleton.getInstance().get_reminder();
 				((TextView) findViewById(R.id.itemTitle)).setText(_selected
 						.get("title"));
 				((TextView) findViewById(R.id.itemDescription))
@@ -79,7 +72,49 @@ public class ViewActivity extends Activity {
 						.get("year"));
 				((TextView) findViewById(R.id.reminderTime)).setText(_selected
 						.get("time"));
-				((TextView) findViewById(R.id.itemCategory)).setText(_selected.get("category"));
+				((TextView) findViewById(R.id.itemCategory)).setText(_selected
+						.get("category"));
+				_id = _selected.get("id");
+
+				getIntent().removeExtra(NotifyService.INTENT_ID);
+			}
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onCreate(android.os.Bundle)
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// Log.i(TAG, "STARTING ACTIVITY");
+		setContentView(R.layout.activity_view);
+		HashMap<String, String> _selected = new HashMap<String, String>();
+
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+
+			// CHECK IF WE ARE COMING FROM THE MAIN ACTIVITY
+			if (extras.getBoolean(INTENT_VIEW)) {
+				// ADD DATA FROM SINGLETON TO OUR TEXTVIEWS IN LAYOUT
+				_selected = ReminderSingleton.getInstance().get_reminder();
+				((TextView) findViewById(R.id.itemTitle)).setText(_selected
+						.get("title"));
+				((TextView) findViewById(R.id.itemDescription))
+						.setText(_selected.get("description"));
+				((TextView) findViewById(R.id.reminderMonth)).setText(_selected
+						.get("month"));
+				((TextView) findViewById(R.id.reminderDay)).setText(_selected
+						.get("day"));
+				((TextView) findViewById(R.id.reminderYear)).setText(_selected
+						.get("year"));
+				((TextView) findViewById(R.id.reminderTime)).setText(_selected
+						.get("time"));
+				((TextView) findViewById(R.id.itemCategory)).setText(_selected
+						.get("category"));
 				_id = _selected.get("id");
 
 				getIntent().removeExtra(NotifyService.INTENT_ID);
@@ -103,8 +138,9 @@ public class ViewActivity extends Activity {
 								// ADD THE MATCHING ITEM TO OUR ARRAYLIST
 								_reminderList.add(entry.getValue());
 								_selected.putAll(entry.getValue());
-								ReminderSingleton.getInstance().set_reminder(_selected);
-								Log.i(TAG,_selected.toString());
+								ReminderSingleton.getInstance().set_reminder(
+										_selected);
+								Log.i(TAG, _selected.toString());
 							}
 						}
 					}
@@ -137,6 +173,8 @@ public class ViewActivity extends Activity {
 			}
 			getIntent().removeExtra(NotifyService.INTENT_ID);
 
+		} else {
+			Toast.makeText(this, "Extras is null.", Toast.LENGTH_SHORT).show();
 		}
 	}
 

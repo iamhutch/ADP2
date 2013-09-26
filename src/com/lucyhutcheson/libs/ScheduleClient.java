@@ -22,7 +22,7 @@ import android.util.Log;
 public class ScheduleClient {
 
 	// The hook into our service
-	private ScheduleService mBoundService;
+	private static ScheduleService mBoundService;
 	// The context to start the service in
 	private Context mContext;
 	// A flag if we are connected to the service or not
@@ -73,7 +73,7 @@ public class ScheduleClient {
 	 * @param c
 	 *            a date to set the notification for
 	 */
-	public void setAlarmForNotification(Calendar c, int _reminderID, String _reminderTitle) {
+	public static void setAlarmForNotification(Calendar c, int _reminderID, String _reminderTitle) {
 		Log.i("SCHEDULE CLIENT", "ID: " + Integer.toString(_reminderID));
 		Log.i("SCHEDULE CLIENT", "TITLE: " + _reminderTitle);
 		mBoundService.setAlarm(c, _reminderID, _reminderTitle);

@@ -201,8 +201,7 @@ public class AddActivity extends Activity {
 			// ADD OUR REMINDER WITH ID HASH TO OUR MASTER LIST
 			_reminderMaster.add(_reminderList);
 
-			// STORE DATA IN SINGLETON AND FILE STORAGE
-			// _reminders.add(_newReminder);
+			// STORE DATA IN  FILE STORAGE
 			FileFunctions.storeObjectFile(getApplicationContext(),
 					REMINDER_FILENAME, _reminderMaster, false);
 
@@ -216,7 +215,7 @@ public class AddActivity extends Activity {
 
 			// Ask our service to set an alarm for that date, this activity
 			// talks to the client that talks to the service
-			scheduleClient.setAlarmForNotification(_c, _reminderID,
+			ScheduleClient.setAlarmForNotification(_c, _reminderID,
 					_reminderTitle);
 			Log.i(TAG, "Setalarmfornotification: " + _reminderTitle);
 
