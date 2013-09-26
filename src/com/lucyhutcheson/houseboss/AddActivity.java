@@ -65,11 +65,15 @@ public class AddActivity extends Activity {
 	static EditText _timeField;
 	String _categorySelected;
 	Spinner _category;
-	private ArrayList<HashMap<String, String>> _reminders;
+	//private ArrayList<HashMap<String, String>> _reminders;
 	public static final String REMINDER_FILENAME = "reminders";
 	private String _reminderTitle;
-	ArrayList<HashMap<String,HashMap<String, String>>> _reminderList;
-
+	ArrayList<HashMap<String,HashMap<String, String>>> _reminderMaster;
+	HashMap<String,HashMap<String, String>> _reminderList;
+	HashMap<String, String> _reminderItem;
+	int _reminderID;
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -144,24 +148,26 @@ public class AddActivity extends Activity {
 			
 		// ALL NECESSARY DATA HAS BEEN ENTERED, PROCEED WITH SAVING
 		} else {
-			_reminders = new ArrayList<HashMap<String, String>>();
-			_reminderList = new ArrayList<HashMap<String,HashMap<String, String>>>();
+			//_reminders = new ArrayList<HashMap<String, String>>();
+			_reminderMaster = new ArrayList<HashMap<String,HashMap<String, String>>>();
 
 			/*
 			 * PULL SAVED DATA FIRST AND THEN ADD OUR NEW DATA
 			 */
 			try {
-				_reminders.addAll(MainActivity.getSavedReminders());
-				Log.i(TAG, "SAVED STRING " + _reminders.toString());
+				_reminderMaster.addAll(MainActivity.getSavedReminderMaster());
+				Log.i(TAG, "SAVED STRING " + _reminderMaster.toString());
 			} catch (Exception e) {
 				Log.e("JSINTERFACE", "No saved data found.");
-				e.printStackTrace();
 			}
+			
 
 			// SETUP OUR VARIABLES TO BE SAVED
 			String convertedTime = convertTime(_hour, _minute);
 			Random _Id = new Random();
-			int _reminderID = _Id.nextInt();
+			_reminderID = _Id.nextInt();
+			
+			
 			_reminderTitle = _titleField.getText().toString();
 			Log.i("ADD ACTIVITY", "Reminder Title: "+ _reminderTitle);
 			String _reminderDate = _year + "-" + _month + "-" + _day + " " + _hour + ":" + _minute;
@@ -173,28 +179,32 @@ public class AddActivity extends Activity {
 			}
 			
 			
-			// ADD OUR DATA TO A HASHMAP
-			HashMap<String, String> _newReminder = new HashMap<String, String>();
-			_newReminder.put("id", String.valueOf(_reminderID));
-			_newReminder.put("title", _titleField.getText().toString());
-			_newReminder.put("description", _descriptionField.getText()
+			// ADD OUR DATA TO A ITEM HASHMAP
+			_reminderItem = new HashMap<String, String>();
+			_reminderItem.put("id", String.valueOf(_reminderID));
+			_reminderItem.put("title", _titleField.getText().toString());
+			_reminderItem.put("description", _descriptionField.getText()
 					.toString());
-			_newReminder.put("category", _categorySelected);
-			_newReminder.put("year", Integer.toString(_year));
-			_newReminder.put("month", Integer.toString(_month + 1));
-			_newReminder.put("day", Integer.toString(_day));
-			_newReminder.put("hour", Integer.toString(_hour));
-			_newReminder.put("minute", Integer.toString(_minute));
-			_newReminder.put("time", convertedTime);
-			_newReminder.put("fulldate", _myReminderDate.toString());
+			_reminderItem.put("category", _categorySelected);
+			_reminderItem.put("year", Integer.toString(_year));
+			_reminderItem.put("month", Integer.toString(_month + 1));
+			_reminderItem.put("day", Integer.toString(_day));
+			_reminderItem.put("hour", Integer.toString(_hour));
+			_reminderItem.put("minute", Integer.toString(_minute));
+			_reminderItem.put("time", convertedTime);
+			_reminderItem.put("fulldate", _myReminderDate.toString());
 			
-			HashMap<String, HashMap<String,String>> _reminderItem = new HashMap<String,HashMap<String,String>>();
-			_reminderItem.put(String.valueOf(_reminderID), _newReminder);
+			// ADD OUR SINGLE ITEM TO OUR LIST INDEXED BY ID
+			_reminderList = new HashMap<String,HashMap<String,String>>();
+			_reminderList.put(String.valueOf(_reminderID), _reminderItem);
+			
+			// ADD OUR REMINDER WITH ID HASH TO OUR MASTER LIST
+			_reminderMaster.add(_reminderList);
 
 			// STORE DATA IN SINGLETON AND FILE STORAGE
-			_reminders.add(_newReminder);
+			//_reminders.add(_newReminder);
 			FileFunctions.storeObjectFile(getApplicationContext(),
-					REMINDER_FILENAME, _reminders, false);
+					REMINDER_FILENAME, _reminderMaster, false);
 
 			// Create a new calendar set to the date chosen
 			// we set the time to midnight (i.e. the first minute of that day)

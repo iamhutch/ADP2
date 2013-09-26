@@ -11,9 +11,7 @@
 package com.lucyhutcheson.houseboss;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,15 +50,20 @@ public class MainActivity extends Activity {
 	private AppPreferences _appPrefs;
 	static Context _context;
 	String _zipCode;
-	ListView _reminderList;
+	ListView _reminderListView;
 	SimpleAdapter _adapter;
-	ArrayList<HashMap<String, String>> _reminderArrayList;
+	ArrayList<HashMap<String,HashMap<String, String>>> _reminderMaster;
+	HashMap<String,HashMap<String, String>> _reminderList;
+	HashMap<String, String> _reminderItem;
+	ArrayList<HashMap<String,String>> _reminderArray;
+	
 	static final String[] _from = new String[] { "title", "month", "day",
 			"year", "time" };
 	static final int[] _to = new int[] { R.id.reminderTitle,
 			R.id.reminderMonth, R.id.reminderDay, R.id.reminderYear,
 			R.id.reminderTime };
 
+	
 	// Handle communication between this activity and
 	// GetDataService class
 	@SuppressLint("HandlerLeak")
@@ -71,14 +74,12 @@ public class MainActivity extends Activity {
 			Log.i(TAG, "HANDLER STARTED");
 
 			if (mymessage.arg1 == RESULT_OK && mymessage.obj != null) {
-				// Log.i("RESPONSE", mymessage.obj.toString());
 				JSONObject json = null;
 				try {
 					json = new JSONObject(mymessage.obj.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				// Log.i("UPDATE WITH JSON", json.toString());
 				updateWeather(json);
 
 			} else if (mymessage.arg1 == RESULT_CANCELED
@@ -105,7 +106,6 @@ public class MainActivity extends Activity {
 		try {
 			JSONObject city = data.getJSONObject("display_location");
 			String forecast = data.getString("temp_f");
-			// Log.i(TAG, forecast);
 			((TextView) findViewById(R.id.forecast)).setText(forecast
 					+ (char) 0x00B0);
 			((TextView) findViewById(R.id.city))
@@ -123,23 +123,30 @@ public class MainActivity extends Activity {
 		
 		try {
 			try {
-				_reminderArrayList = getSavedReminders();
-				
-				Log.i(TAG, _reminderArrayList.toString());
-				
+				// GET OUR SAVED DATA
+				_reminderMaster = getSavedReminderMaster();
 			} catch (Exception e) {
 				Log.e(TAG, "Error getting reminders");
 				e.printStackTrace();
 			}
-			
-			if (_reminderArrayList != null) {
+						
+			if (_reminderMaster != null) {
 				
-				//Collections.sort(_reminderArrayList, new MapComparator());
+				// GET THE HASHMAPS WITH THEIR ID KYES
+				// PULL OUT JUST THE VALUES SINCE THE VALUES ALSO CONTAIN THEIR IDS
+				_reminderArray = new ArrayList<HashMap<String, String>>();	
+				for (int i = 0; i < _reminderMaster.size(); i++) {
+					_reminderArray.addAll( _reminderMaster.get(i).values());
+				}
+				
+				Log.i(TAG, "REMINDERARRAY: " + _reminderArray.toString());
 				
 				// ATTACH LIST ADAPTER
-				_reminderList = (ListView) findViewById(R.id.listview);
-				SimpleAdapter _myAdapter = new SimpleAdapter(_context, _reminderArrayList, R.layout.activity_main_row, _from, _to);
-				_reminderList.setAdapter(_myAdapter);
+				_reminderListView = (ListView) findViewById(R.id.listview);
+				SimpleAdapter _myListAdapter = new SimpleAdapter(_context, _reminderArray, R.layout.activity_main_row, _from, _to);
+				_reminderListView.setAdapter(_myListAdapter);
+				
+				// HIDE EMPTY TEXT
 				((TextView) findViewById(R.id.empty)).setVisibility(View.GONE);
 			}
 		} catch (Exception e) {
@@ -186,25 +193,21 @@ public class MainActivity extends Activity {
 					"No zip code saved. Please add one in app Settings.",
 					Toast.LENGTH_LONG).show();
 		}
-		_reminderList = (ListView) findViewById(R.id.listview);
+		_reminderListView = (ListView) findViewById(R.id.listview);
 
-		_reminderList
+		_reminderListView
 				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 					@Override
 					public void onItemClick(AdapterView<?> parent,
 							final View view, int position, long id) {
-						//Log.i(TAG, "CLICKED " + Integer.toString(position));
-						HashMap<String, String> selected = _reminderArrayList
-								.get(position);
+						HashMap<String, String> selected = _reminderArray.get(position);
 						ReminderSingleton.getInstance().set_reminder(selected);
 
 						// INTENT TO START VIEW ACTIVITY
-						Intent intent = new Intent(MainActivity.this,
-								ViewActivity.class);
+						Intent intent = new Intent(MainActivity.this, ViewActivity.class);
 						intent.putExtra(ViewActivity.INTENT_VIEW, true);
 						MainActivity.this.startActivity(intent);
-
 					}
 
 				});
@@ -243,6 +246,38 @@ public class MainActivity extends Activity {
 
 	}
 
+	
+	/**
+	 * Function to get read the favorites file which contains any dining data
+	 * that was saved as a favorite.
+	 * 
+	 * @return hashmap of our favorites data
+	 */
+	@SuppressWarnings({ "unchecked", "unused" })
+	public static ArrayList<HashMap<String, HashMap<String,String>>> getSavedReminderMaster() {
+		Log.i("GET SAVED REMINDERS MASTER", "STARTING");
+
+		/*
+		 * GET STORED DATA FROM REMINDERS FILE
+		 */
+		Object stored = FileFunctions.readObjectFile(_context,
+				AddActivity.REMINDER_FILENAME, false);
+		Log.i(TAG, stored.toString());
+		ArrayList<HashMap<String, HashMap<String, String>>> _remindersList = null;
+
+		// CHECK IF OBJECT EXISTS
+		if (stored == null) {
+			Log.i("HOUSEBOSS", "NO REMINDERS FILE FOUND");
+			_remindersList = new ArrayList<HashMap<String, HashMap<String, String>>>();
+		}
+		// IF OBJECT EXISTS, BRING IN DATA AND ADD TO HASHMAP
+		else {
+			// CAST HASHMAP
+			_remindersList = (ArrayList<HashMap<String, HashMap<String, String>>>) stored;
+		}
+		return _remindersList;
+
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -291,11 +326,4 @@ public class MainActivity extends Activity {
 
 }
 
-class MapComparator implements Comparator<HashMap<String, String>>
-{
-	@Override
-	public int compare(HashMap<String, String> first, HashMap<String, String> second) {
-        return first.get("fulldate").compareTo(second.get("fulldate"));
-	}
-}
 

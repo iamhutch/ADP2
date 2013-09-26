@@ -110,17 +110,10 @@ public class NotifyService extends Service {
 		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, _intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		_intent.setData(Uri.parse("houseBoss"+NOTIFICATION_ID));
 		
-		//Notification notification = new Notification(icon, text, time);
-
-		// Set the info for the views that show in the notification panel.
-		//notification.setLatestEventInfo(this, title, text, contentIntent);
-
-		// Clear the notification when it is pressed
-		//notification.flags += Notification.FLAG_ONGOING_EVENT;
-		//notification.flags += Notification.FLAG_AUTO_CANCEL;
+		Log.i("NOTIFY SERVICE", Integer.toString(NOTIFICATION_ID));
 		
-		Notification.Builder builder = new Notification.Builder(this);
-		
+		// SETUP NOTIFICATION
+		Notification.Builder builder = new Notification.Builder(this);	
 		builder.setContentIntent(contentIntent)
 		.setSmallIcon(icon)
 		.setContentTitle(title)
@@ -128,8 +121,7 @@ public class NotifyService extends Service {
 		.setAutoCancel(true)
 		.setVibrate(new long[]{100, 250, 100, 500})
 		.setContentText(text);
-		
-		
+				
 		Notification notification = builder.build();
 
 		// Send the notification to the system.
