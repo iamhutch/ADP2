@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import com.lucyhutcheson.libs.DatePickerFragment;
+import com.lucyhutcheson.libs.AddDatePickerFragment;
 import com.lucyhutcheson.libs.FileFunctions;
 import com.lucyhutcheson.libs.ScheduleClient;
-import com.lucyhutcheson.libs.TimePickerFragment;
+import com.lucyhutcheson.libs.AddTimePickerFragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -65,15 +65,13 @@ public class AddActivity extends Activity {
 	static EditText _timeField;
 	String _categorySelected;
 	Spinner _category;
-	//private ArrayList<HashMap<String, String>> _reminders;
 	public static final String REMINDER_FILENAME = "reminders";
 	private String _reminderTitle;
-	ArrayList<HashMap<String,HashMap<String, String>>> _reminderMaster;
-	HashMap<String,HashMap<String, String>> _reminderList;
+	ArrayList<HashMap<String, HashMap<String, String>>> _reminderMaster;
+	HashMap<String, HashMap<String, String>> _reminderList;
 	HashMap<String, String> _reminderItem;
 	int _reminderID;
-	
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -90,7 +88,7 @@ public class AddActivity extends Activity {
 		_dateField = (EditText) findViewById(R.id.dateField);
 		_timeField = (EditText) findViewById(R.id.timeField);
 		_reminderTitle = null;
-		
+
 		// Add today's date and time to the text fields
 		Time today = new Time(Time.getCurrentTimezone());
 		today.setToNow();
@@ -138,18 +136,21 @@ public class AddActivity extends Activity {
 		// CHECK IF OUR TITLE, DATE, OR TIME FIELDS ARE EMPTY
 		if (_titleField.getText().toString().equals("")) {
 			// NOTIFY USER THAT THERE ARE EMPTY FIELDS
-			Toast.makeText(this, "Please enter a title.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Please enter a title.", Toast.LENGTH_SHORT)
+					.show();
 		} else if (_dateField.getText().toString().equals("")) {
 			// NOTIFY USER THAT THERE ARE EMPTY FIELDS
-			Toast.makeText(this, "Please enter a date.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Please enter a date.", Toast.LENGTH_SHORT)
+					.show();
 		} else if (_timeField.getText().toString().equals("")) {
 			// NOTIFY USER THAT THERE ARE EMPTY FIELDS
-			Toast.makeText(this, "Please enter a time.", Toast.LENGTH_SHORT).show();
-			
-		// ALL NECESSARY DATA HAS BEEN ENTERED, PROCEED WITH SAVING
+			Toast.makeText(this, "Please enter a time.", Toast.LENGTH_SHORT)
+					.show();
+
+			// ALL NECESSARY DATA HAS BEEN ENTERED, PROCEED WITH SAVING
 		} else {
-			//_reminders = new ArrayList<HashMap<String, String>>();
-			_reminderMaster = new ArrayList<HashMap<String,HashMap<String, String>>>();
+			// _reminders = new ArrayList<HashMap<String, String>>();
+			_reminderMaster = new ArrayList<HashMap<String, HashMap<String, String>>>();
 
 			/*
 			 * PULL SAVED DATA FIRST AND THEN ADD OUR NEW DATA
@@ -160,25 +161,24 @@ public class AddActivity extends Activity {
 			} catch (Exception e) {
 				Log.e("JSINTERFACE", "No saved data found.");
 			}
-			
 
 			// SETUP OUR VARIABLES TO BE SAVED
 			String convertedTime = convertTime(_hour, _minute);
 			Random _Id = new Random();
 			_reminderID = _Id.nextInt();
-			
-			
+
 			_reminderTitle = _titleField.getText().toString();
-			Log.i("ADD ACTIVITY", "Reminder Title: "+ _reminderTitle);
-			String _reminderDate = _year + "-" + _month + "-" + _day + " " + _hour + ":" + _minute;
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+			Log.i("ADD ACTIVITY", "Reminder Title: " + _reminderTitle);
+			String _reminderDate = _year + "-" + _month + "-" + _day + " "
+					+ _hour + ":" + _minute;
+			SimpleDateFormat dateFormat = new SimpleDateFormat(
+					"yyyy-MM-dd HH:mm");
 			try {
 				_myReminderDate = dateFormat.parse(_reminderDate);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			
-			
+
 			// ADD OUR DATA TO A ITEM HASHMAP
 			_reminderItem = new HashMap<String, String>();
 			_reminderItem.put("id", String.valueOf(_reminderID));
@@ -193,16 +193,16 @@ public class AddActivity extends Activity {
 			_reminderItem.put("minute", Integer.toString(_minute));
 			_reminderItem.put("time", convertedTime);
 			_reminderItem.put("fulldate", _myReminderDate.toString());
-			
+
 			// ADD OUR SINGLE ITEM TO OUR LIST INDEXED BY ID
-			_reminderList = new HashMap<String,HashMap<String,String>>();
+			_reminderList = new HashMap<String, HashMap<String, String>>();
 			_reminderList.put(String.valueOf(_reminderID), _reminderItem);
-			
+
 			// ADD OUR REMINDER WITH ID HASH TO OUR MASTER LIST
 			_reminderMaster.add(_reminderList);
 
 			// STORE DATA IN SINGLETON AND FILE STORAGE
-			//_reminders.add(_newReminder);
+			// _reminders.add(_newReminder);
 			FileFunctions.storeObjectFile(getApplicationContext(),
 					REMINDER_FILENAME, _reminderMaster, false);
 
@@ -213,11 +213,11 @@ public class AddActivity extends Activity {
 			_c.set(Calendar.HOUR_OF_DAY, _hour);
 			_c.set(Calendar.MINUTE, _minute);
 			_c.set(Calendar.SECOND, 0);
-			
 
 			// Ask our service to set an alarm for that date, this activity
 			// talks to the client that talks to the service
-			scheduleClient.setAlarmForNotification(_c, _reminderID, _reminderTitle);
+			scheduleClient.setAlarmForNotification(_c, _reminderID,
+					_reminderTitle);
 			Log.i(TAG, "Setalarmfornotification: " + _reminderTitle);
 
 			// Notify the user what they just did
@@ -240,7 +240,7 @@ public class AddActivity extends Activity {
 	 *            the v
 	 */
 	public void showDatePickerDialog(View v) {
-		DialogFragment newFragment = new DatePickerFragment();
+		DialogFragment newFragment = new AddDatePickerFragment();
 		newFragment.show(getFragmentManager(), "datePicker");
 	}
 
@@ -251,7 +251,7 @@ public class AddActivity extends Activity {
 	 *            the v
 	 */
 	public void showTimePickerDialog(View v) {
-		DialogFragment newFragment = new TimePickerFragment();
+		DialogFragment newFragment = new AddTimePickerFragment();
 		newFragment.show(getFragmentManager(), "timePicker");
 	}
 

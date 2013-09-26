@@ -2,7 +2,7 @@ package com.lucyhutcheson.libs;
 
 import java.util.Calendar;
 
-import com.lucyhutcheson.houseboss.AddActivity;
+import com.lucyhutcheson.houseboss.EditActivity;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -10,13 +10,13 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
-public class DatePickerFragment extends DialogFragment implements
+public class EditDatePickerFragment extends DialogFragment implements
 		DatePickerDialog.OnDateSetListener {
 	
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// Use the current date as the default date in the picker
+		// USE THE CURRENT DATE AS THE DEFAULT DATE IN THE PICKER
 		final Calendar c = Calendar.getInstance();
 		int year = c.get(Calendar.YEAR);
 		int month = c.get(Calendar.MONTH);
@@ -24,6 +24,7 @@ public class DatePickerFragment extends DialogFragment implements
 
 		long longDate = c.getTime().getTime();
 		
+
 		DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
 		dialog.getDatePicker().setMinDate(longDate);
 		
@@ -35,7 +36,7 @@ public class DatePickerFragment extends DialogFragment implements
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear,
 			int dayOfMonth) {
-		AddActivity.setDate(year, monthOfYear, dayOfMonth);
+			EditActivity.setDate(year, monthOfYear, dayOfMonth);
 	}
 
 }

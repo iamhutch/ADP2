@@ -37,7 +37,6 @@ public class ViewActivity extends Activity {
 	public static final String INTENT_VIEW = "com.lucyhutcheson.houseboss.INTENT_VIEW";
 	private ArrayList<HashMap<String, HashMap<String, String>>> _reminderArrayList;
 	private ArrayList<HashMap<String, String>> _reminderList;
-	private HashMap<String, String> _selected;
 	private String _id;
 
 	@Override
@@ -80,6 +79,7 @@ public class ViewActivity extends Activity {
 						.get("year"));
 				((TextView) findViewById(R.id.reminderTime)).setText(_selected
 						.get("time"));
+				((TextView) findViewById(R.id.itemCategory)).setText(_selected.get("category"));
 				_id = _selected.get("id");
 
 				getIntent().removeExtra(NotifyService.INTENT_ID);
@@ -186,13 +186,9 @@ public class ViewActivity extends Activity {
 	 * IF USER CLICKS EDIT ICON FROM MAIN ACTION BAR
 	 */
 	public void onEdit() {
-		Toast.makeText(this,
-				"Edit function not yet available for " + _id,
-				Toast.LENGTH_SHORT).show();
-		// INTENT TO START ADD ACTIVITY
+		// INTENT TO START EDIT ACTIVITY
 		Intent intent = new Intent(ViewActivity.this, EditActivity.class);
 		intent.putExtra(NotifyService.INTENT_ID, _id);
-		intent.putExtra(INTENT_VIEW, _selected);
 		ViewActivity.this.startActivity(intent);
 	}
 

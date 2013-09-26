@@ -76,6 +76,7 @@
             android:name="com.lucyhutcheson.houseboss.EditActivity"
             android:label="@string/title_activity_edit"
             android:parentActivityName="com.lucyhutcheson.houseboss.MainActivity"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
