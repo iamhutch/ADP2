@@ -61,9 +61,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/itemCategory"
             style="@style/HouseBoss.reminderDescription" />
-        </LinearLayout>
+    </LinearLayout>
 
 </ScrollView>

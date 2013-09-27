@@ -6,12 +6,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.lucyhutcheson.libs.EditDatePickerFragment;
 import com.lucyhutcheson.libs.EditTimePickerFragment;
@@ -55,7 +52,6 @@ public class EditActivity extends Activity {
 	static EditText _dateField;
 	static EditText _timeField;
 	private ArrayList<HashMap<String, HashMap<String, String>>> _reminderArrayList;
-	private ArrayList<HashMap<String, String>> _reminders;
 	public static final String REMINDER_FILENAME = "reminders";
 	private String _reminderTitle;
 	private static Date _myReminderDate;
@@ -215,6 +211,17 @@ public class EditActivity extends Activity {
 
 			Log.i(TAG, "REMINDERMASTER: " + _reminderMaster.toString());
 
+			// DELETE OUR REMINDER WITH ID HASH FROM OUR MASTER LIST
+			for (HashMap<String, HashMap<String, String>> hashMap1 : _reminderMaster) {
+				for (Iterator<Entry<String, HashMap<String, String>>> it = hashMap1
+						.entrySet().iterator(); it.hasNext();) {
+					Entry<String, HashMap<String, String>> entry = it.next();
+					if (entry.getKey().equals(_reminderID)) {
+						it.remove();
+						break;
+					}
+				}
+			}
 			// ADD OUR REMINDER WITH ID HASH TO OUR MASTER LIST
 			_reminderMaster.add(_reminderList);
 
@@ -257,7 +264,6 @@ public class EditActivity extends Activity {
 		 * PULL SAVED DATA FIRST AND THEN ADD OUR NEW DATA
 		 */
 		_reminderArrayList = MainActivity.getSavedReminderMaster();
-		_reminders = new ArrayList<HashMap<String, String>>();
 		Log.i(TAG, "REMINDER ARRAY LIST " + _reminderArrayList.toString());
 
 		// GO THROUGH THE ARRAYLIST
@@ -291,7 +297,7 @@ public class EditActivity extends Activity {
 	}
 
 	public void resetAlarmForNotification(int uniqueId) {
-		((AlarmManager) getApplicationContext().getSystemService(
+		((AlarmManager) this.getSystemService(
 				Context.ALARM_SERVICE)).cancel(PendingIntent.getService(this,
 				(int) uniqueId, new Intent(this, NotifyService.class), 0));
 	}

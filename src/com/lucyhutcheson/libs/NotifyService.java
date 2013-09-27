@@ -44,7 +44,7 @@ public class NotifyService extends Service {
 	public static final String INTENT_ID = "com.lucyhutcheson.houseboss.INTENT_ID";
 	// Name of the intent extra info TITLE
 	public static final String INTENT_TITLE = "com.lucyhutcheson.houseboss.INTENT_TITLE";
-	
+
 	// The system notification manager
 	private NotificationManager mNM;
 
@@ -80,16 +80,17 @@ public class NotifyService extends Service {
 	 * Creates a notification and shows it in the OS drag-down status bar
 	 */
 	private void showNotification(Intent intent) {
-		
+
 		Bundle extras = intent.getExtras();
-		
+
 		if (extras != null) {
-			NOTIFICATION_ID =  extras.getInt(INTENT_ID);
+			NOTIFICATION_ID = extras.getInt(INTENT_ID);
 		} else {
 			NOTIFICATION_ID = 123;
 		}
-		Log.i("NOTIFY SERVICE INTENT", Integer.toString(extras.getInt(INTENT_ID)));
-		
+		Log.i("NOTIFY SERVICE INTENT",
+				Integer.toString(extras.getInt(INTENT_ID)));
+
 		// This is the 'title' of the notification
 		CharSequence title = intent.getCharSequenceExtra(INTENT_TITLE);
 		Log.i("NOTIFY SERVICE", "Setalarmfornotification: " + title);
@@ -100,28 +101,27 @@ public class NotifyService extends Service {
 		// What time to show on the notification
 		long time = System.currentTimeMillis();
 
-
-		// The PendingIntent to launch our activity with the id if the user selects this
+		// The PendingIntent to launch our activity with the id if the user
+		// selects this
 		// notification
 		Intent _intent = new Intent(this, ViewActivity.class);
 		_intent.putExtra(INTENT_ID, NOTIFICATION_ID);
-		_intent.setAction("houseBoss"+NOTIFICATION_ID);
-		_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, _intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		_intent.setData(Uri.parse("houseBoss"+NOTIFICATION_ID));
-		
-		Log.i("NOTIFY SERVICE", Integer.toString(NOTIFICATION_ID));
-		
+		_intent.setAction("houseBoss" + NOTIFICATION_ID);
+		_intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				getApplicationContext(), NOTIFICATION_ID, _intent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		_intent.setData(Uri.parse("houseBoss" + NOTIFICATION_ID));
+
+
 		// SETUP NOTIFICATION
-		Notification.Builder builder = new Notification.Builder(this);	
-		builder.setContentIntent(contentIntent)
-		.setSmallIcon(icon)
-		.setContentTitle(title)
-		.setWhen(time)
-		.setAutoCancel(true)
-		.setVibrate(new long[]{100, 250, 100, 500})
-		.setContentText(text);
-				
+		Notification.Builder builder = new Notification.Builder(this);
+		builder.setContentIntent(contentIntent).setSmallIcon(icon)
+				.setContentTitle(title).setWhen(time).setAutoCancel(true)
+				.setVibrate(new long[] { 100, 250, 100, 500 })
+				.setContentText(text);
+
 		Notification notification = builder.build();
 
 		// Send the notification to the system.
@@ -129,6 +129,10 @@ public class NotifyService extends Service {
 
 		// Stop the service when we are finished
 		stopSelf();
+	}
+
+	public void resetAlarmForNotification(int uniqueId) {
+		mNM.cancel(uniqueId);
 	}
 
 }

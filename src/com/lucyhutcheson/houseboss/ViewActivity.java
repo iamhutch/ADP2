@@ -16,6 +16,9 @@ import java.util.Map;
 
 import com.lucyhutcheson.libs.NotifyService;
 import com.lucyhutcheson.libs.ReminderSingleton;
+import com.socialize.ActionBarUtils;
+import com.socialize.Socialize;
+import com.socialize.entity.Entity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,6 +26,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +55,10 @@ public class ViewActivity extends Activity {
 	protected void onResume() {
 
 		super.onResume();
+		// Call Socialize in onResume
+		Socialize.onResume(this);
+
+		
 		HashMap<String, String> _selected = new HashMap<String, String>();
 
 		Bundle extras = getIntent().getExtras();
@@ -91,7 +99,27 @@ public class ViewActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Log.i(TAG, "STARTING ACTIVITY");
-		setContentView(R.layout.activity_view);
+
+		// Call Socialize in onCreate
+		Socialize.onCreate(this, savedInstanceState);
+
+		// Your entity key. May be passed as a Bundle parameter to your activity
+		String entityKey = "http://www.lucyhutcheson.com";
+
+		// Create an entity object including a name
+		// The Entity object is Serializable, so you could also store the whole
+		// object in the Intent
+		Entity entity = Entity.newInstance(entityKey, "Socialize");
+
+		// Wrap your existing view with the action bar.
+		// your_layout refers to the resource ID of your current layout.
+		View actionBarWrapped = ActionBarUtils.showActionBar(this,
+				R.layout.activity_view, entity);
+
+		// Now set the view for your activity to be the wrapped view.
+		setContentView(actionBarWrapped);
+
+		// setContentView(R.layout.activity_view);
 		HashMap<String, String> _selected = new HashMap<String, String>();
 
 		Bundle extras = getIntent().getExtras();
@@ -113,8 +141,9 @@ public class ViewActivity extends Activity {
 						.get("year"));
 				((TextView) findViewById(R.id.reminderTime)).setText(_selected
 						.get("time"));
-				((TextView) findViewById(R.id.itemCategory)).setText(_selected
-						.get("category"));
+				TextView category = (TextView) findViewById(R.id.itemCategory);
+				category.setText(_selected.get("category"));
+				Log.i(TAG, _selected.get("category"));
 				_id = _selected.get("id");
 
 				getIntent().removeExtra(NotifyService.INTENT_ID);
@@ -202,9 +231,6 @@ public class ViewActivity extends Activity {
 		case android.R.id.home:
 			ViewActivity.this.finish();
 			return true;
-		case R.id.action_share:
-			onShare();
-			return true;
 		case R.id.action_edit:
 			onEdit();
 			return true;
@@ -238,6 +264,23 @@ public class ViewActivity extends Activity {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		// Call Socialize in onPause
+		Socialize.onPause(this);
+	}
+
+
+	@Override
+	protected void onDestroy() {
+		// Call Socialize in onDestroy before the activity is destroyed
+		Socialize.onDestroy(this);
+
+		super.onDestroy();
 	}
 
 }
